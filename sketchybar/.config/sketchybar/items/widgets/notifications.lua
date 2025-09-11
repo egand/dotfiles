@@ -4,11 +4,11 @@ local app_icons = require("helpers.app_icons")
 
 -- Lista delle app da monitorare
 local apps = {
-    { name = "Messages",          icon = app_icons["Messages"] },
+    { name = "Microsoft Outlook", icon = app_icons["Microsoft Outlook"] },
+    { name = "Microsoft Teams",   icon = app_icons["Microsoft Teams"] },
     { name = "WhatsApp",          icon = app_icons["WhatsApp"] },
     { name = "Telegram",          icon = app_icons["Telegram"] },
-    { name = "Microsoft Teams",   icon = app_icons["Microsoft Teams"] },
-    { name = "Microsoft Outlook", icon = app_icons["Microsoft Outlook"] }
+    --{ name = "Messages",          icon = app_icons["Messages"] },
 }
 
 local notification_items = {}
@@ -30,26 +30,29 @@ local function update_notification_for_app(app)
         local unread = tonumber(result) or 0
         if unread > 0 then
             notification_items[app.name]:set({
-                icon = { color = colors.red },
+                icon = {
+                    string = app.icon,
+                    color = colors.red
+                },
                 label = { string = tostring(unread) }
             })
         else
             notification_items[app.name]:set({
-                icon = { color = colors.grey },
+                icon = { string = "" },
                 label = { string = "" }
             })
         end
     end)
 end
 
-sbar.add("item", { position = "right", width = settings.group_paddings })
+sbar.add("item", { position = "left", width = settings.group_paddings })
 
 for i, app in ipairs(apps) do
     local item = sbar.add("item", "widgets.notifications." .. app.name, {
-        position = "right",
+        position = "left",
         icon = {
-            string = app.icon,
-            color = colors.grey,
+            string = "",
+            color = colors.red,
             font = "sketchybar-app-font:Regular:16.0",
         },
         label = {

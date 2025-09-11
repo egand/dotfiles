@@ -7,24 +7,54 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "context_servers": {
+    "sequential-thinking": {
+      "source": "custom",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "mcp-server-context7": {
+      "source": "extension",
+      "enabled": true,
+      "settings": {
+        "default_minimum_tokens": "10000"
+      }
+    },
+    "mcp-server-github": {
+      "source": "extension",
+      "enabled": true,
+      "settings": {}
+    },
+    "postgres-context-server": {
+      "source": "extension",
+      "enabled": true,
+      "settings": {
+        "database_url": "postgresql://myuser:mypassword@localhost:5432/mydatabase"
+      }
+    }
+  },
   "features": {
     "edit_prediction_provider": "zed"
   },
   "agent": {
+    "always_allow_tool_actions": true,
+    "play_sound_when_agent_done": true,
     "default_profile": "write",
     "default_model": {
       "provider": "copilot_chat",
-      "model": "gpt-4.1"
+      "model": "claude-sonnet-4"
     }
   },
-  "icon_theme": "Catppuccin Frappé",
+  "icon_theme": "Catppuccin Mocha",
   "ui_font_size": 16,
   "buffer_font_size": 14,
   "buffer_font_family": "BlexMono Nerd Font Mono",
+  "autosave": "on_focus_change",
+  "lsp_document_colors": "background",
   "theme": {
-    "mode": "system",
-    "light": "One Light",
-    "dark": "Catppuccin Frappé"
+    "mode": "dark",
+    "light": "Catppuccin Frappé",
+    "dark": "Catppuccin Macchiato"
   },
   "languages": {
     "Python": {
