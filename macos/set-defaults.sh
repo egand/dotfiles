@@ -11,6 +11,10 @@
 #killall WindowManager
 #killall Finder
 
+
+defaults write com.apple.loginwindow TALLogoutSavesState -bool false
+defaults write com.apple.loginwindow LoginwindowLaunchesRelaunchApps -bool false
+
 # Disable the sound effects on boot
 sudo nvram SystemAudioVolume=" "
 
@@ -24,7 +28,7 @@ defaults write com.apple.finder CreateDesktop false
 defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
 
 # Disable transparency in the menu bar and elsewhere on Yosemite
-defaults write com.apple.universalaccess reduceTransparency -bool true
+defaults write com.apple.universalaccess reduceTransparency -bool false
 
 # Always show scrollbars
 defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
@@ -357,9 +361,9 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
 
 # Cant disable the Dock, but you can make it very small and hide it.
 # Set Dock icon size to 1 pixel
-defaults write com.apple.dock tilesize -int 1
+defaults write com.apple.dock tilesize -int 4
 # Automatically hide and show the Dock
-defaults write com.apple.dock autohide -bool true
+defaults write com.apple.dock autohide -bool false
 
 
 # Change minimize/maximize window effect
@@ -652,7 +656,7 @@ defaults write com.apple.SoftwareUpdate CriticalUpdateInstall -int 1
 defaults write com.apple.commerce AutoUpdate -bool true
 
 # Hide the menu bar
-defaults write NSGlobalDomain _HIHideMenuBar -bool true
+defaults write NSGlobalDomain _HIHideMenuBar -bool false
 
 ###############################################################################
 # Photos                                                                      #
@@ -710,6 +714,41 @@ defaults write com.irradiatedsoftware.SizeUp StartAtLogin -bool true
 
 # Don’t show the preferences window on next start
 defaults write com.irradiatedsoftware.SizeUp ShowPrefsOnNextStart -bool false
+
+###############################################################################
+# Modern macOS Tweaks (Sonoma/Sequoia)                                        #
+###############################################################################
+
+# Click wallpaper to reveal desktop (Stage Manager / Desktop behavior)
+defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -bool false
+
+# Show battery percentage in menu bar
+defaults -currentHost write com.apple.controlcenter.plist BatteryShowPercentage -bool true
+
+# Privacy: Do not send search queries to Apple (Spotlight)
+defaults write com.apple.spotlight orderedItems -array \
+	'{"enabled" = 1;"name" = "APPLICATIONS";}' \
+	'{"enabled" = 1;"name" = "SYSTEM_PREFS";}' \
+	'{"enabled" = 1;"name" = "DIRECTORIES";}' \
+	'{"enabled" = 1;"name" = "PDF";}' \
+	'{"enabled" = 1;"name" = "FONTS";}' \
+	'{"enabled" = 0;"name" = "DOCUMENTS";}' \
+	'{"enabled" = 0;"name" = "MESSAGES";}' \
+	'{"enabled" = 0;"name" = "CONTACTS";}' \
+	'{"enabled" = 0;"name" = "EVENT_TODO";}' \
+	'{"enabled" = 0;"name" = "IMAGES";}' \
+	'{"enabled" = 0;"name" = "BOOKMARKS";}' \
+	'{"enabled" = 0;"name" = "MUSIC";}' \
+	'{"enabled" = 0;"name" = "MOVIES";}' \
+	'{"enabled" = 0;"name" = "PRESENTATIONS";}' \
+	'{"enabled" = 0;"name" = "SPREADSHEETS";}' \
+	'{"enabled" = 0;"name" = "SOURCE";}' \
+	'{"enabled" = 0;"name" = "MENU_DEFINITION";}' \
+	'{"enabled" = 0;"name" = "MENU_OTHER";}' \
+	'{"enabled" = 0;"name" = "MENU_CONVERSION";}' \
+	'{"enabled" = 0;"name" = "MENU_EXPRESSION";}' \
+	'{"enabled" = 0;"name" = "WEB_VIDEO";}' \
+	'{"enabled" = 0;"name" = "MENU_SPOTLIGHT_SUGGESTIONS";}'
 
 ###############################################################################
 # Kill affected applications                                                  #

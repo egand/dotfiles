@@ -88,3 +88,9 @@ source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring
 source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+
+
+# Load Angular CLI autocompletion.
+source <(ng completion script)
+
+. "$HOME/.local/bin/env"

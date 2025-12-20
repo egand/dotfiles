@@ -64,10 +64,11 @@ install_brew_packages() {
         zsh-syntax-highlighting # Zsh plugin for syntax highlighting
         zsh-completions
         zsh-history-substring-search
-        pyenv # A tool to manage multiple Python versions
+        uv
         go # The Go programming language
         ripgrep
         shellcheck
+        tlrc
     )
 
     for package in "${packages[@]}"; do
@@ -92,8 +93,8 @@ install_brew_packages() {
         ghostty # A terminal emulator for macOS
         raycast # A fast, keyboard-driven launcher for macOS
         obsidian
-        nikitabobko/tap/aerospace
-        zed
+        orbstack
+        linearmouse
     )
 
     for cask in "${casks[@]}"; do
@@ -156,6 +157,33 @@ install_sdkman() {
     fi
 }
 
+setup_keyboard_layout() {
+    info "Installing custom keyboard layout (System-wide)..."
+
+    local layout_name="US-IT.bundle"
+    local source_path="$HOME/.dotfiles/keyboard/$layout_name"
+    # NOTA: Destinazione senza ~ (tilde), va nella root Library
+    local dest_path="/Library/Keyboard Layouts/"
+
+    if [ -d "$source_path" ]; then
+        info "Requesting sudo permissions to write to /Library/..."
+
+        # Copia con privilegi di amministrazione
+        # Rimuove versioni precedenti per evitare conflitti
+        sudo rm -rf "$dest_path/$layout_name"
+        sudo cp -r "$source_path" "$dest_path"
+
+        # Corregge i permessi per assicurarsi che root sia il proprietario (standard per /Library)
+        sudo chown -R root:wheel "$dest_path/$layout_name"
+
+        info "Layout $layout_name installed to System Library."
+        info "⚠️  IMPORTANT: You must RESTART (or Log Out) to see the new layout."
+        info "   Then go to: Settings -> Keyboard -> Input Sources -> Edit -> + -> Others -> US-IT"
+    else
+        echo "Warning: Custom layout $layout_name not found in $source_path. Skipping."
+    fi
+}
+
 # Function to set up dotfiles using GNU Stow
 stow_dotfiles() {
     info "Setting up dotfiles with GNU Stow..."
@@ -163,9 +191,9 @@ stow_dotfiles() {
     # List of directories within your dotfiles repo to be "stowed".
     local stow_dirs=(
         zsh
-        aerospace
+        #aerospace
         ghostty
-        sketchybar
+        #sketchybar
         starship
         zed
     )
@@ -198,8 +226,9 @@ main() {
     info "Finished installing sdkman."
     stow_dotfiles
 
-
     info "Setup complete! Please restart your terminal for all changes to take effect."
+    setup_keyboard_layout
+
 }
 
 # Run the main function

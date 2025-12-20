@@ -114,7 +114,7 @@ alt-w = [
     'exec-and-forget open -a /Applications/Windows\ App.app',
 ]
 alt-g = 'exec-and-forget open -a /Applications/NVIDIA\ GeForce\ NOW.app'
-alt-shift-r = ['exec-and-forget /opt/homebrew/bin/sketchybar --reload']
+alt-shift-r = ['reload-config', 'exec-and-forget /opt/homebrew/bin/sketchybar --reload']
 
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#layout
@@ -238,6 +238,14 @@ run = ['move-node-to-workspace 6']
 [[on-window-detected]]
 if.app-id = 'com.microsoft.Outlook'
 run = ['move-node-to-workspace 7']
+
+[[on-window-detected]]
+if.app-id = 'com.codeweavers.crossover'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.window-title-regex-substring = 'Unreal Tournament'
+run = 'layout floating'
 
 [[on-window-detected]]
 run = ['move-node-to-workspace 0']
