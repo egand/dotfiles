@@ -30,6 +30,151 @@ info() {
 
 # --- Main functions ---
 
+
+create_directories() {
+    info "Creating optimized folder structure..."
+
+    # ==============================================================================
+    # 1. DEVELOPER WORKSPACE (~/Developer)
+    # ==============================================================================
+    # WHY: Kept local (NO iCloud sync).
+    #      Prevents sync issues with 'node_modules', build artifacts, and heavy Unity caches.
+    #      macOS automatically assigns a specialized icon to a folder named "Developer".
+    info "Setting up Developer environment..."
+
+    # -> General Projects
+    # WHAT: Your main coding playground. Java, Python, Zig, Rust, Web Apps.
+    # EXAMPLES: 'my-todo-app', 'zig-compiler-test', 'python-scraper'.
+    mkdir -p "$HOME/Developer/workspaces/projects"
+
+    # -> Game Development
+    # WHAT: Specific folder for Game Engines (Unity, Godot, Unreal).
+    # WHY: These projects contain massive binary files that shouldn't be mixed with lightweight code.
+    # EXAMPLES: 'SuperMarioClone_Unity', 'Godot-Platformer'.
+    mkdir -p "$HOME/Developer/workspaces/games"
+
+    # -> University Code
+    # WHAT: Code strictly related to university assignments/exams.
+    # EXAMPLES: 'CS101-Algorithms', 'Java-Exam-Final-Project'.
+    mkdir -p "$HOME/Developer/workspaces/uni-code"
+
+    # -> Scratchpad (The "Dirty" Zone)
+    # WHAT: Temporary code. Safe to delete at any time.
+    # 'ai-tests': Copy-pasting code from Claude/ChatGPT to see if it runs.
+    # 'temp': Quick experiments, cloning a repo just to read one file.
+    mkdir -p "$HOME/Developer/scratchpad/ai-tests"
+    mkdir -p "$HOME/Developer/scratchpad/temp"
+
+    # -> Tools & Config
+    # WHAT: Your personal scripts, binaries, or global configs.
+    # EXAMPLES: 'backup-script.sh', 'docker-compose-global.yml'.
+    mkdir -p "$HOME/Developer/tools"
+
+    # -> Repositories
+    # Open Source projects cloned from GitHub for study/reference
+    mkdir -p "$HOME/Developer/repos"
+
+
+    # ==============================================================================
+    # 2. UNIVERSITY & DOCUMENTS (~/Documents)
+    # ==============================================================================
+    # WHY: Synced via iCloud. Available on iPhone/iPad.
+    #      Perfect for text files, PDFs, and bureaucratic docs.
+    info "Setting up University & Documents..."
+
+    # -> Current Semester
+    # WHAT: Active study material.
+    # EXAMPLES: 'Math-Analysis-Slides.pdf', 'Physics-Notes.md'.
+    mkdir -p "$HOME/Documents/university/current-semester"
+
+    # -> Archive
+    # WHAT: Old semesters. Keep it clean!
+    # EXAMPLES: 'Year-1', 'Semester-1', 'Passed-Exams'.
+    mkdir -p "$HOME/Documents/university/archive"
+
+    # -> Personal Docs
+    # WHAT: Life administration.
+    # EXAMPLES: 'ID-Card-Scan.pdf', 'Rent-Contract.pdf', 'Resume.pdf'.
+    mkdir -p "$HOME/Documents/personal/docs"
+
+    # -> Cheatsheets
+    # WHAT: Quick reference guides for development.
+    # EXAMPLES: 'Vim-Shortcuts.pdf', 'Unity-Lifecycle-Chart.png', 'Git-Commands.md'.
+    mkdir -p "$HOME/Documents/cheatsheets"
+
+
+    # ==============================================================================
+    # 3. CREATIVE ASSETS (~/Assets)
+    # ==============================================================================
+    # WHY: The "Supermarket" for your creative work. Local storage (Heavy files).
+    #      These are SOURCE files to be imported into Unity/Blender when needed.
+    info "Setting up Assets library..."
+
+    # -> 3D Models
+    # 'kitbash': Downloaded models to build scenes quickly (e.g., 'SciFi-Crate.obj').
+    # 'exports': Your own Blender creations exported as FBX/GLTF for Unity.
+    mkdir -p "$HOME/Assets/3d-models/kitbash"
+    mkdir -p "$HOME/Assets/3d-models/exports"
+
+    # -> Textures
+    # WHAT: Image files for 3D materials or 2D games.
+    # EXAMPLES: 'Wood_Texture_Albedo.png', 'UI_Button_Sprite.png'.
+    mkdir -p "$HOME/Assets/textures"
+
+    # -> Audio SFX (Sound Effects)
+    # WHAT: Non-musical sounds for games.
+    # EXAMPLES: 'Explosion_01.wav', 'UI_Click.wav', 'Footsteps_Grass.wav'.
+    mkdir -p "$HOME/Assets/audio-sfx"
+
+    # -> Blender Saves
+    # WHAT: Work-in-progress .blend files (before exporting).
+    # EXAMPLES: 'Main_Character_Sculpt.blend'.
+    mkdir -p "$HOME/Assets/blender-saves"
+
+
+    # ==============================================================================
+    # 4. MUSIC PRODUCTION (~/Music)
+    # ==============================================================================
+    # WHY: Standard location for DAWs (Bitwig). Local storage.
+    info "Setting up Music production..."
+
+    # -> Bitwig Projects
+    # WHAT: Your songs/tracks.
+    # EXAMPLES: 'My-Techno-Track.bwproject'.
+    mkdir -p "$HOME/Music/bitwig-projects"
+
+    # -> VST Presets
+    # WHAT: Saved settings for your synthesizers.
+    # EXAMPLES: 'My-Fat-Bass-Patch.fxp'.
+    mkdir -p "$HOME/Music/vst-presets"
+
+    # -> Sample Library (The Ingredients)
+    # 'drums': Single hits (One-shots). EXAMPLES: 'Kick.wav', 'Snare.wav'.
+    # 'loops': Musical phrases. EXAMPLES: 'Funky-Bass-Loop-120bpm.wav'.
+    # 'fx': Sound design elements. EXAMPLES: 'Riser.wav', 'White-Noise.wav'.
+    # 'vocals': Human voice files. EXAMPLES: 'Acapella.wav', 'Adlib-Yeah.wav'.
+    # 'packs': Full folders downloaded from Splice/Cymatics.
+    mkdir -p "$HOME/Music/sample-library/drums"
+    mkdir -p "$HOME/Music/sample-library/loops"
+    mkdir -p "$HOME/Music/sample-library/fx"
+    mkdir -p "$HOME/Music/sample-library/vocals"
+    mkdir -p "$HOME/Music/sample-library/packs"
+
+
+    # ==============================================================================
+    # 5. HEAVY MEDIA (~/Movies)
+    # ==============================================================================
+    # WHY: Video files are too large for iCloud.
+    info "Setting up Media folders..."
+
+    # -> University Recordings
+    # WHAT: Long video lessons or tutorials.
+    # EXAMPLES: 'Lecture-01-DataStructures.mp4'.
+    mkdir -p "$HOME/Movies/uni-recordings"
+
+    info "Folder structure created successfully!"
+}
+
 # Function to install Homebrew
 install_homebrew() {
     info "Checking for Homebrew installation..."
@@ -256,6 +401,8 @@ main() {
     install_sdkman
     info "Finished installing sdkman."
     stow_dotfiles
+
+    create_directories
 
     info "Setup complete! Please restart your terminal for all changes to take effect."
     setup_keyboard_layout
