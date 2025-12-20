@@ -43,6 +43,22 @@ install_homebrew() {
     fi
 }
 
+install_rosetta() {
+    # Controllo se siamo su Apple Silicon (arm64)
+    if [[ "$(uname -m)" == "arm64" ]]; then
+        # Controllo se Rosetta è già installato
+        if /usr/bin/pgrep oahd >/dev/null 2>&1; then
+            info "Rosetta 2 is already installed. Skipping."
+        else
+            info "Installing Rosetta 2..."
+            # --agree-to-license evita che ti chieda di premere "A"
+            softwareupdate --install-rosetta --agree-to-license
+        fi
+    else
+        info "Intel Mac detected. Rosetta 2 not needed."
+    fi
+}
+
 # Function to install packages and applications using Homebrew
 install_brew_packages() {
     info "Installing command-line packages..."
@@ -95,6 +111,20 @@ install_brew_packages() {
         obsidian
         orbstack
         linearmouse
+        yaak
+        nvidia-geforce-now
+        steam
+        betterdisplay
+        blender
+        unity-hub
+        discord
+        google-chrome
+        whatsapp
+        telegram
+        epic-games
+        obsidian
+        qbittorrent
+        visual-studio-code
     )
 
     for cask in "${casks[@]}"; do
@@ -218,6 +248,7 @@ main() {
         echo "Error: Failed to apply macOS defaults." >&2
         exit 1
     fi
+    install_rosetta
     install_homebrew
     install_brew_packages
     install_nvm
