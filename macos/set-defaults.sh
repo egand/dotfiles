@@ -28,7 +28,7 @@ defaults write com.apple.finder CreateDesktop false
 defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
 
 # Disable transparency in the menu bar and elsewhere on Yosemite
-defaults write com.apple.universalaccess reduceTransparency -bool false
+#defaults write com.apple.universalaccess reduceTransparency -bool false
 
 # Always show scrollbars
 defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
@@ -62,7 +62,7 @@ defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 # defaults write com.apple.LaunchServices LSQuarantine -bool false
 
 # Remove duplicates in the “Open With” menu (also see `lscleanup` alias)
-/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
+# /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
 
 # Display ASCII control characters using caret notation in standard text views
 # Try e.g. `cd /tmp; unidecode "\x{0000}" > cc.txt; open -e cc.txt`
@@ -139,17 +139,17 @@ defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 
 # Use scroll gesture with the Ctrl (^) modifier key to zoom
-defaults write com.apple.universalaccess closeViewScrollWheelToggle -bool true
-defaults write com.apple.universalaccess HIDScrollZoomModifierMask -int 262144
+# defaults write com.apple.universalaccess closeViewScrollWheelToggle -bool true
+# defaults write com.apple.universalaccess HIDScrollZoomModifierMask -int 262144
 # Follow the keyboard focus while zoomed in
-defaults write com.apple.universalaccess closeViewZoomFollowsFocus -bool true
+# defaults write com.apple.universalaccess closeViewZoomFollowsFocus -bool true
 
 # Disable press-and-hold for keys in favor of key repeat
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
 # Set a blazingly fast keyboard repeat rate
 defaults write NSGlobalDomain KeyRepeat -int 1
-defaults write NSGlobalDomain InitialKeyRepeat -int 20
+defaults write NSGlobalDomain InitialKeyRepeat -int 30
 
 # Set language and text formats
 # Note: if you’re in the US, replace `EUR` with `USD`, `Centimeters` with
@@ -181,14 +181,14 @@ sudo pmset -a autorestart 1
 # Restart automatically if the computer freezes
 sudo systemsetup -setrestartfreeze on
 
-# Sleep the display after 15 minutes
-sudo pmset -a displaysleep 15
+# Sleep the display after 10 minutes
+sudo pmset -a displaysleep 10
 
-# Disable machine sleep while charging
-sudo pmset -c sleep 0
+# Set machine sleep to 120 minutes while charging
+sudo pmset -c sleep 120
 
-# Set machine sleep to 10 minutes on battery
-sudo pmset -b sleep 10
+# Set machine sleep to 15 minutes on battery
+sudo pmset -b sleep 15
 
 # Set standby delay to 24 hours (default is 1 hour)
 sudo pmset -a standbydelay 86400
@@ -459,7 +459,7 @@ defaults write com.apple.dock wvous-bl-modifier -int 0
 ###############################################################################
 
 # Privacy: don’t send search queries to Apple
-defaults write com.apple.Safari UniversalSearchEnabled -bool false
+# defaults write com.apple.Safari UniversalSearchEnabled -bool false
 defaults write com.apple.Safari SuppressSearchSuggestions -bool true
 
 # Press Tab to highlight each item on a web page

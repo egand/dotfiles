@@ -386,13 +386,13 @@ stow_dotfiles() {
 
 main() {
     info "Starting macOS setup..."
-    info "Applying macOS defaults..."
-    if source "$HOME/.dotfiles/macos/set-defaults.sh"; then
-        info "Successfully applied macOS defaults."
-    else
-        echo "Error: Failed to apply macOS defaults." >&2
-        exit 1
-    fi
+    #info "Applying macOS defaults..."
+    #if source "$HOME/.dotfiles/macos/set-defaults.sh"; then
+    #    info "Successfully applied macOS defaults."
+    #else
+    #    echo "Error: Failed to apply macOS defaults." >&2
+    #    exit 1
+    #fi
     install_rosetta
     install_homebrew
     install_brew_packages
