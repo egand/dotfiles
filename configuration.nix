@@ -22,6 +22,18 @@
     };
   };
 
+  # Daily automatic background system upgrade (Homebrew + Nix Flakes) at 03:00 AM
+  launchd.daemons.daily-system-upgrade = {
+    command = "/Users/${user}/.dotfiles/scripts/system-upgrade.sh";
+    serviceConfig = {
+      StartCalendarInterval = [
+        { Hour = 3; Minute = 0; }
+      ];
+      StandardErrorPath = "/var/log/daily-system-upgrade.err.log";
+      StandardOutPath = "/var/log/daily-system-upgrade.out.log";
+    };
+  };
+
   system.defaults = {
     NSGlobalDomain = {
       AppleInterfaceStyle = "Dark";

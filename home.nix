@@ -138,8 +138,9 @@ in
       sw = "git switch";
       lg = "lazygit";
 
-      # Rebuild system
+      # Rebuild & Upgrade system
       rb = "~/.dotfiles/rebuild.sh";
+      upgrade = "~/.dotfiles/scripts/system-upgrade.sh";
     };
   };
 
