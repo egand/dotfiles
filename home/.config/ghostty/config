@@ -1,0 +1,8 @@
+theme = Catppuccin Frappe
+font-family = "BlexMono Nerd Font Mono"
+font-size = 14
+background-opacity = 0.90
+background-blur = 30
+unfocused-split-opacity = 0.65
+macos-titlebar-style = hidden
+auto-update = off
