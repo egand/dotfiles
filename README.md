@@ -10,7 +10,7 @@ Declarative personal macOS environment managed with **Nix-Darwin**, **Home-Manag
 - **Terminal & Multiplexer**: Ghostty (Catppuccin Frappe, IBM Plex Mono / BlexMono font) + Herdr (`ctrl+b` keybindings).
 - **Editor**: Modular Neovim (Treesitter, LSP, Conform format-on-save, Oil, Snacks, Rose-Pine Moon theme).
 - **Shell**: Zsh + Starship prompt, `zoxide` (smart cd), `eza` (ls), `bat` (cat), `delta` (diff), `lazygit`, `direnv`, and Antigravity CLI aliases (`ag`, `aga`).
-- **AI Integration**: Shared `AGENTS.md` for Claude Code, Codex, and OpenCode, plus Pi Agent extensions.
+- **AI Integration**: Shared `AGENTS.md` for Antigravity, Claude Code, Codex, and OpenCode; Antigravity CLI custom status bar (model telemetry, token meter, context limits, Git and directory status) and Pi Agent extensions.
 
 ## Fresh Machine Setup
 

@@ -178,6 +178,14 @@ in
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/AGENTS.md";
   home.file.".config/opencode/AGENTS.md".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/AGENTS.md";
+  home.file.".gemini/config/AGENTS.md".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/AGENTS.md";
+
+  # Antigravity CLI configurations
+  home.file.".gemini/antigravity-cli/settings.json".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.gemini/antigravity-cli/settings.json";
+  home.file.".gemini/antigravity-cli/statusline.sh".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.gemini/antigravity-cli/statusline.sh";
 
   # Pi Agent configurations
   home.file.".pi/agent/themes".source =
