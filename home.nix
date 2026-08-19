@@ -32,8 +32,9 @@ in
     wget
 
     # Language Servers & Development Tooling
+    tree-sitter
     nil
-    nixfmt-rfc-style
+    nixfmt
     stylua
     lua-language-server
     ruff
@@ -41,7 +42,6 @@ in
     gopls
     jdt-language-server
     openjdk21
-    csharp-ls
     shfmt
     shellcheck
     bash-language-server
@@ -250,10 +250,14 @@ in
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/AGENTS.md";
 
   # Antigravity CLI configurations
-  home.file.".gemini/antigravity-cli/settings.json".source =
-    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.gemini/antigravity-cli/settings.json";
-  home.file.".gemini/antigravity-cli/statusline.sh".source =
-    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.gemini/antigravity-cli/statusline.sh";
+  home.file.".gemini/antigravity-cli/settings.json" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.gemini/antigravity-cli/settings.json";
+    force = true;
+  };
+  home.file.".gemini/antigravity-cli/statusline.sh" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.gemini/antigravity-cli/statusline.sh";
+    force = true;
+  };
 
   # Pi Agent configurations
   home.file.".pi/agent/themes".source =

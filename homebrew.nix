@@ -24,9 +24,6 @@
       "tlrc"
       "shellcheck"
 
-      # Battery & Hardware CLI
-      "battery"
-
       # Local AI & Model Tooling
       "ollama"
       "mlx-lm"

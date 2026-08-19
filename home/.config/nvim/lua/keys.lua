@@ -7,5 +7,11 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { desc = 'Clear Search Highl
 -- Select all
 vim.keymap.set('n', '<C-a>', 'ggVG', { desc = 'Select All' })
 
+-- Window navigation (switch between explorer sidebar and code editor)
+vim.keymap.set('n', '<C-h>', '<C-w>h', { desc = 'Focus Left Window (Explorer)' })
+vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = 'Focus Right Window (Code)' })
+vim.keymap.set('n', '<C-j>', '<C-w>j', { desc = 'Focus Lower Window' })
+vim.keymap.set('n', '<C-k>', '<C-w>k', { desc = 'Focus Upper Window' })
+
 -- Pasting over a selection no longer clobbers clipboard
 vim.cmd([[ xnoremap <expr> p 'pgv"'.v:register.'y' ]])
