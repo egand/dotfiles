@@ -15,6 +15,7 @@ return {
         treesitter = true,
         which_key = true,
         snacks = true,
+        lualine = true,
       },
     },
     config = function(_, opts)
