@@ -85,6 +85,11 @@ in
   };
 
   # Native CLI tool integrations
+  programs.mise = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
   programs.zoxide = {
     enable = true;
     enableZshIntegration = true;
