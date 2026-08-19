@@ -1,27 +1,25 @@
 return {
   {
-    'rose-pine/neovim',
+    'catppuccin/nvim',
+    name = 'catppuccin',
     lazy = false,
     priority = 1000,
-    name = 'rose-pine',
-    config = function()
-      require('rose-pine').setup({
-        dark_variant = 'moon',
-        dim_inactive_windows = false,
-        extend_background_behind_borders = false,
-        styles = {
-          italic = false,
-          transparency = vim.uv.os_uname().sysname == 'Darwin'
-            or string.find(vim.uv.os_uname().sysname, 'Windows') ~= nil
-            or string.find(vim.uv.os_uname().release, 'WSL') ~= nil,
-        },
-      })
-
-      vim.cmd('colorscheme rose-pine')
-
-      -- Make the dimmed directory path in the Snacks picker readable
-      local palette = require('rose-pine.palette')
-      vim.api.nvim_set_hl(0, 'SnacksPickerDir', { fg = palette.subtle })
+    opts = {
+      flavour = 'frappe', -- matches Ghostty 'Catppuccin Frappe'
+      transparent_background = true,
+      integrations = {
+        blink_cmp = true,
+        gitsigns = true,
+        neogit = true,
+        diffview = true,
+        treesitter = true,
+        which_key = true,
+        snacks = true,
+      },
+    },
+    config = function(_, opts)
+      require('catppuccin').setup(opts)
+      vim.cmd.colorscheme('catppuccin')
     end,
   },
 }
