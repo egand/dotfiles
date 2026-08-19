@@ -3,7 +3,7 @@
 set -euo pipefail
 
 export PATH="/opt/homebrew/bin:/nix/var/nix/profiles/default/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
-DIR="$HOME/.dotfiles"
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 
 echo "==> [$(date '+%Y-%m-%d %H:%M:%S')] Starting system upgrade..."
 
@@ -21,14 +21,23 @@ if [ -d "$DIR" ] && command -v nix >/dev/null 2>&1; then
   nix flake update --flake "$DIR"
 
   echo "==> Applying darwin-rebuild switch..."
-  sudo darwin-rebuild switch --flake "$DIR#mac"
+  if command -v darwin-rebuild >/dev/null 2>&1; then
+    sudo darwin-rebuild switch --flake "$DIR#mac"
+  else
+    sudo nix run github:nix-darwin/nix-darwin/nix-darwin-26.05#darwin-rebuild -- switch --flake "$DIR#mac"
+  fi
 
-  # 3. Amend flake.lock changes into the current commit to keep history clean
+  # 3. Create a dedicated commit for flake.lock if there are changes
   if ! git -C "$DIR" diff --quiet flake.lock 2>/dev/null; then
     git -C "$DIR" add flake.lock
-    git -C "$DIR" commit --amend --no-edit || true
-    echo "    Updated flake.lock amended to the current commit."
+    git -C "$DIR" commit -m "chore(flake): update lockfile" || true
+    echo "    Updated flake.lock committed."
   fi
 fi
 
 echo "==> [$(date '+%Y-%m-%d %H:%M:%S')] System upgrade completed successfully."
+
+# Desktop notification (when run via background launchd)
+if command -v osascript >/dev/null 2>&1; then
+  osascript -e 'display notification "System upgrade completed successfully." with title "Dotfiles Upgrade"' 2>/dev/null || true
+fi

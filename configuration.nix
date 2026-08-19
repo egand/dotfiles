@@ -1,4 +1,4 @@
-{ user, ... }:
+{ pkgs, user, ... }:
 
 {
   # Determinate already manages the Nix daemon, so nix-darwin shouldn't.
@@ -13,6 +13,13 @@
   };
   system.stateVersion = 6;
 
+  # Fonts management for macOS GUI applications (installed into /Library/Fonts)
+  fonts.packages = with pkgs; [
+    nerd-fonts.blex-mono
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.hack
+  ];
+
   # Gaming network optimization: Disable AWDL (AirDrop) on boot for lower Wi-Fi jitter
   launchd.daemons.disable-awdl = {
     command = "/sbin/ifconfig awdl0 down";
@@ -23,16 +30,24 @@
   };
 
   # Daily automatic background system upgrade (Homebrew + Nix Flakes) at 03:00 AM
-  launchd.daemons.daily-system-upgrade = {
+  # Configured as a user agent so it runs under the user's session with correct HOME and permissions
+  launchd.user.agents.daily-system-upgrade = {
     command = "/Users/${user}/.dotfiles/scripts/system-upgrade.sh";
     serviceConfig = {
       StartCalendarInterval = [
         { Hour = 3; Minute = 0; }
       ];
-      StandardErrorPath = "/var/log/daily-system-upgrade.err.log";
-      StandardOutPath = "/var/log/daily-system-upgrade.out.log";
+      StandardErrorPath = "/tmp/daily-system-upgrade.err.log";
+      StandardOutPath = "/tmp/daily-system-upgrade.out.log";
     };
   };
+
+  # Power Management activation script (Display Sleep & battery optimization)
+  system.activationScripts.postActivation.text = ''
+    # Optimize sleep timers (battery: 10m display sleep, AC: 15m display sleep)
+    pmset -b displaysleep 10 disksleep 10 sleep 15
+    pmset -c displaysleep 15 disksleep 10 sleep 30
+  '';
 
   system.defaults = {
     NSGlobalDomain = {
@@ -73,6 +88,14 @@
       _FXSortFoldersFirst = true;             # keep folders on top
       FXDefaultSearchScope = "SCcf";          # search current folder by default
       FXEnableExtensionChangeWarning = false; # no extension change warning
+      FXRemoveOldTrashItems = true;          # auto-empty trash after 30 days
+      ShowHardDrivesOnDesktop = false;
+      ShowExternalHardDrivesOnDesktop = false;
+    };
+
+    screensaver = {
+      askForPassword = true;                  # lock immediately on display sleep/screensaver
+      askForPasswordDelay = 0;
     };
 
     trackpad = {

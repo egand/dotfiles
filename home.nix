@@ -10,17 +10,41 @@ in
   home.stateVersion = "24.11";
 
   home.packages = with pkgs; [
-    # Core CLI
+    # Core CLI & Dev Tools
     ripgrep
     fd
     fzf
     jq
+    yq-go
     lazygit
     neovim
     zoxide
     eza
     bat
     delta
+    btop
+    dust
+    duf
+    difftastic
+    just
+    tokei
+    curl
+    wget
+
+    # Language Servers & Development Tooling
+    nil
+    nixfmt-rfc-style
+    stylua
+    lua-language-server
+    ruff
+    pyright
+    gopls
+    jdt-language-server
+    openjdk21
+    csharp-ls
+    shfmt
+    shellcheck
+    bash-language-server
 
     # Fonts
     nerd-fonts.blex-mono
@@ -31,23 +55,65 @@ in
   fonts.fontconfig.enable = true;
   home.sessionVariables.EDITOR = "nvim";
 
+  programs.git = {
+    enable = true;
+    lfs.enable = true;
+    settings = {
+      user = {
+        name = "Enrico Gandaglia";
+        email = "e.gandaglia@gmail.com";
+      };
+      init.defaultBranch = "develop";
+      core.pager = "delta";
+      interactive.diffFilter = "delta --color-only";
+      delta = {
+        navigate = true;
+        light = false;
+        side-by-side = true;
+        line-numbers = true;
+      };
+      merge.conflictstyle = "zdiff3";
+      diff.colorMoved = "default";
+      pull.rebase = true;
+      push.autoSetupRemote = true;
+    };
+  };
+
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
   };
+
+  # Native CLI tool integrations
+  programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  programs.bat.enable = true;
+  programs.eza.enable = true;
 
   programs.zsh = {
     enable = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
+    history = {
+      size = 100000;
+      save = 100000;
+      share = true;
+      extended = true;
+      ignoreAllDups = true;
+      ignoreSpace = true;
+    };
+
     initContent = ''
       bindkey '^f' autosuggest-accept
-
-      # --- Zoxide (Smarter cd) ---
-      if command -v zoxide &> /dev/null; then
-        eval "$(zoxide init zsh)"
-      fi
 
       # --- AWDL (AirDrop) Toggle for Low-Latency Gaming ---
       awdl() {
@@ -93,15 +159,14 @@ in
       }
       compdef _awdl_completion awdl
 
-      # --- Homebrew Auto-Sync Wrapper ---
-      # Automatically captures brew install / uninstall into ~/.dotfiles/homebrew.nix
+      # --- Homebrew Sync / Check Wrapper ---
       brew() {
         if [[ "$1" == "install" || "$1" == "uninstall" || "$1" == "remove" ]]; then
           command brew "$@"
           local exit_code=$?
           if [[ $exit_code -eq 0 && -f "$HOME/.dotfiles/scripts/brew-sync.sh" ]]; then
-            echo "🔄 Updating ~/.dotfiles/homebrew.nix..."
-            "$HOME/.dotfiles/scripts/brew-sync.sh" --quiet
+            echo "🔄 Checking ~/.dotfiles/homebrew.nix sync..."
+            "$HOME/.dotfiles/scripts/brew-sync.sh" --check
           fi
           return $exit_code
         else
@@ -123,6 +188,9 @@ in
       ll = "eza -la --icons --git";
       tree = "eza --tree --icons";
       cat = "bat";
+      du = "dust";
+      df = "duf";
+      top = "btop";
 
       # Antigravity CLI
       ag = "antigravity";
@@ -161,10 +229,10 @@ in
   };
 
   # Edit-in-place: Symlink live configuration files directly into ~/.config
-  home.file.".config/ghostty".source =
-    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.config/ghostty";
-  home.file.".config/herdr".source =
-    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.config/herdr";
+  home.file.".config/ghostty/config".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.config/ghostty/config";
+  home.file.".config/herdr/config.toml".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.config/herdr/config.toml";
   home.file.".config/nvim".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.config/nvim";
 

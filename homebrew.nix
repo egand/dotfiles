@@ -24,6 +24,9 @@
       "tlrc"
       "shellcheck"
 
+      # Battery & Hardware CLI
+      "battery"
+
       # Local AI & Model Tooling
       "ollama"
       "mlx-lm"
@@ -34,7 +37,6 @@
     casks = [
       # AI & Terminals
       "antigravity-cli"
-      "claude-code"
       "ghostty"
 
       # Development & Editors
@@ -50,13 +52,16 @@
       "obs"
       "vlc"
 
-      # Gaming & Peripherals
+      # Gaming, Battery & Peripherals
       "league-of-legends"
       "nvidia-geforce-now"
       "steam"
       "epic-games"
       "linearmouse"
       "betterdisplay"
+      "aldente"
+      "stats"
+      "app-tamer"
 
       # Browsers, Notes & Communication
       "google-chrome"
