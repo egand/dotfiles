@@ -15,3 +15,7 @@ vim.keymap.set('n', '<C-k>', '<C-w>k', { desc = 'Focus Upper Window' })
 
 -- Pasting over a selection no longer clobbers clipboard
 vim.cmd([[ xnoremap <expr> p 'pgv"'.v:register.'y' ]])
+
+-- Navigate wrapped lines naturally (press j/k to move visually, count + j/k to move physical lines)
+vim.keymap.set({ 'n', 'x' }, 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true, desc = 'Down (Visual Line)' })
+vim.keymap.set({ 'n', 'x' }, 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true, desc = 'Up (Visual Line)' })

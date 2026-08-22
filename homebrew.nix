@@ -34,7 +34,7 @@
     casks = [
       # AI & Terminals
       "antigravity-cli"
-      "ghostty"
+      "ghostty@tip"
 
       # Development & Editors
       "visual-studio-code"
