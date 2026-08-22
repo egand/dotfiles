@@ -14,7 +14,10 @@ return {
     opts = {
       explorer = { enabled = true },
       picker = { enabled = true },
-      notifier = { enabled = true },
+      notifier = {
+        enabled = true,
+        timeout = 7000, -- Keep notifications visible for 7 seconds
+      },
       input = { enabled = true },
       indent = { enabled = true },
       scroll = { enabled = true },
