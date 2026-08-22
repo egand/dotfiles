@@ -1,11 +1,11 @@
 return {
   {
     'nvim-treesitter/nvim-treesitter',
-    branch = 'master',
+    branch = 'main',
     build = ':TSUpdate',
     event = { 'BufReadPost', 'BufNewFile' },
     opts = {
-      ensure_installed = { 'bash', 'c', 'html', 'javascript', 'json', 'lua', 'markdown', 'nix', 'python', 'typescript', 'vim', 'yaml' },
+      ensure_installed = { 'bash', 'c', 'html', 'javascript', 'json', 'lua', 'markdown', 'markdown_inline', 'nix', 'python', 'typescript', 'vim', 'yaml' },
       highlight = { enable = true },
       indent = { enable = true },
     },
