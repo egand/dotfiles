@@ -13,3 +13,14 @@ o.mouse = ''                   -- no mouse in nvim; also lets Herdr keep host mo
 o.wrap = true                  -- wrap long lines visually
 o.linebreak = true             -- wrap at word boundaries rather than middle of words
 o.breakindent = true           -- preserve indentation on wrapped lines
+o.autoread = true              -- auto-reload files changed outside neovim (e.g. by AI agents or git)
+
+-- Automatically trigger buffer & git status refresh on focus, buffer switch, and idle cursor
+vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold' }, {
+  desc = 'Check if buffers were modified externally',
+  callback = function()
+    if vim.fn.getcmdwintype() == '' then
+      vim.cmd('checktime')
+    end
+  end,
+})
