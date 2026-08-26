@@ -13,7 +13,14 @@ return {
     lazy = false,
     opts = {
       explorer = { enabled = true },
-      picker = { enabled = true },
+      picker = {
+        enabled = true,
+        sources = {
+          explorer = {
+            ignored = true, -- Show git-ignored files and folders (e.g. plans/)
+          },
+        },
+      },
       notifier = {
         enabled = true,
         timeout = 7000, -- Keep notifications visible for 7 seconds
