@@ -54,4 +54,11 @@ NIX_BIN="$(command -v nix)"
 sudo "$NIX_BIN" run github:nix-darwin/nix-darwin/nix-darwin-26.05#darwin-rebuild -- \
   switch --flake ~/.dotfiles#mac
 
+echo "==> Step 6: import Raycast configuration"
+if [ -f "$DIR/raycast/raycast.rayconfig" ]; then
+  echo "    Opening Raycast configuration import wizard..."
+  open "$DIR/raycast/raycast.rayconfig"
+fi
+
 echo "==> Done. Use ./rebuild.sh for future changes."
+

@@ -7,7 +7,8 @@ Declarative personal macOS environment managed with **Nix-Darwin**, **Home-Manag
 - **System Settings**: Dark mode, fast key repeat (accent popups disabled for Vim), instant dock, Finder list view with breadcrumbs, screenshot location in Downloads.
 - **Gaming Optimization**: `awdl` launcher daemon (AirDrop/AWDL disabled on boot for jitter-free gaming in League of Legends & GeForce NOW) with on-demand `awdl on|off|status|toggle` commands.
 - **Declarative Homebrew**: Casks & brews managed in `homebrew.nix` with auto-sync wrapper (`brew install <pkg>` automatically records to Nix).
-- **Terminal & Multiplexer**: Ghostty (Catppuccin Frappe, IBM Plex Mono / BlexMono font) + Herdr (`ctrl+b` keybindings).
+- **Terminal & Multiplexer**: Ghostty (Catppuccin Frappe, IBM Plex Mono / BlexMono font) + Herdr (`ctrl+b` keybindings) autostarting on terminal launch.
+- **Launcher & Utilities**: Raycast with tracked `.rayconfig` backup (Ghostty terminal alias, `Cmd+Shift+V` Clipboard History).
 - **Editor**: Modular Neovim (Treesitter, LSP, Conform format-on-save, Oil, Snacks, Rose-Pine Moon theme).
 - **Shell**: Zsh + Starship prompt, `zoxide` (smart cd), `eza` (ls), `bat` (cat), `delta` (diff), `lazygit`, `direnv`, and Antigravity CLI aliases (`ag`, `aga`).
 - **AI Integration**: Shared `AGENTS.md` for Antigravity, Claude Code, Codex, and OpenCode; Antigravity CLI custom status bar (model telemetry, token meter, context limits, Git and directory status) and Pi Agent extensions.
@@ -23,6 +24,7 @@ Declarative personal macOS environment managed with **Nix-Darwin**, **Home-Manag
    ```bash
    ./bootstrap.sh
    ```
+   *This installs Determinate Nix, builds your nix-darwin configuration, links dotfiles, and automatically opens the Raycast configuration import wizard.*
 
 ## Daily Workflow
 
