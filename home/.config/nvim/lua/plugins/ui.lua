@@ -55,4 +55,19 @@ return {
       { 'R', mode = { 'o', 'x' }, function() require('flash').treesitter_search() end, desc = 'Treesitter Search' },
     },
   },
+
+  -- Render Markdown (In-buffer rich Markdown rendering)
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
+    ft = { 'markdown', 'Avante' },
+    opts = {
+      heading = {
+        icons = { '󰉫 ', '󰉬 ', '󰉭 ', '󰉮 ', '󰉯 ', '󰉰 ' },
+      },
+      bullet = {
+        icons = { '●', '○', '◆', '◇' },
+      },
+    },
+  },
 }

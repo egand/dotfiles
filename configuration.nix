@@ -13,6 +13,12 @@
   };
   system.stateVersion = 6;
 
+  # Security: Touch ID for sudo & passwordless darwin-rebuild for automated background upgrades
+  security.pam.services.sudo_local.touchIdAuth = true;
+  security.sudo.extraConfig = ''
+    ${user} ALL=(ALL) NOPASSWD: /run/current-system/sw/bin/darwin-rebuild
+  '';
+
   # Fonts management for macOS GUI applications (installed into /Library/Fonts)
   fonts.packages = with pkgs; [
     nerd-fonts.blex-mono
@@ -53,7 +59,7 @@
     NSGlobalDomain = {
       AppleInterfaceStyle = "Dark";
       KeyRepeat = 2;                          # fast key repeat
-      InitialKeyRepeat = 15;                  # short delay before repeat
+      InitialKeyRepeat = 20;                  # delay before repeat (~300ms)
       ApplePressAndHoldEnabled = false;       # enable key repeat in Vim/Neovim (no accent popup)
       _HIHideMenuBar = true;                  # auto-hide the menu bar
       AppleShowAllExtensions = true;

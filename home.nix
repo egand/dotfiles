@@ -181,6 +181,7 @@ in
 
       # Path additions for Antigravity tools
       export PATH="$HOME/.antigravity/antigravity/bin:$HOME/.local/bin:$PATH"
+      export HOMEBREW_CASK_OPTS="--no-quarantine"
     '';
 
     shellAliases = {

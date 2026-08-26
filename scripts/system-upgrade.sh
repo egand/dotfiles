@@ -3,6 +3,7 @@
 set -euo pipefail
 
 export PATH="/opt/homebrew/bin:/nix/var/nix/profiles/default/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+export HOMEBREW_CASK_OPTS="--no-quarantine"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 
 echo "==> [$(date '+%Y-%m-%d %H:%M:%S')] Starting system upgrade..."

@@ -9,6 +9,7 @@
 
   homebrew = {
     enable = true;
+    caskArgs.no_quarantine = true;
     onActivation.cleanup = "zap";  # remove anything not listed here
     onActivation.autoUpdate = true;
     onActivation.extraFlags = [ "--force" ];
@@ -50,7 +51,6 @@
       "vlc"
 
       # Gaming, Battery & Peripherals
-      "league-of-legends"
       "nvidia-geforce-now"
       "steam"
       "epic-games"

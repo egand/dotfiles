@@ -6,3 +6,4 @@ background-blur = 30
 unfocused-split-opacity = 0.65
 macos-titlebar-style = transparent
 auto-update = off
+command = /opt/homebrew/bin/herdr
