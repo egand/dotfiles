@@ -36,6 +36,7 @@
       # AI & Terminals
       "antigravity-cli"
       "ghostty@tip"
+      "opensuperwhisper"
 
       # Development & Editors
       "visual-studio-code"

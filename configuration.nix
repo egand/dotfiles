@@ -48,6 +48,17 @@
     };
   };
 
+  # Launch OpenSuperWhisper automatically on graphical desktop login
+  launchd.user.agents.opensuperwhisper = {
+    command = "/Applications/OpenSuperWhisper.app/Contents/MacOS/OpenSuperWhisper";
+    serviceConfig = {
+      RunAtLoad = true;
+      KeepAlive = false;
+      LimitLoadToSessionType = [ "Aqua" ];
+      ProcessType = "Interactive";
+    };
+  };
+
   # Power Management activation script (Display Sleep & battery optimization)
   system.activationScripts.postActivation.text = ''
     # Optimize sleep timers (battery: 10m display sleep, AC: 15m display sleep)
@@ -118,6 +129,17 @@
       "com.apple.desktopservices" = {
         DSDontWriteNetworkStores = true;
         DSDontWriteUSBStores = true;
+      };
+
+      "ru.starmel.OpenSuperWhisper" = {
+        hasCompletedOnboarding = true;
+        selectedEngine = "whisper";
+        whisperLanguage = "en";
+        modifierOnlyHotkey = "rightOption";
+        startHiddenInMenuBar = true;
+        autoPasteTranscription = true;
+        KeyboardShortcuts_toggleRecord = "{\"carbonKeyCode\":50,\"carbonModifiers\":2048}";
+        KeyboardShortcuts_escape = "{\"carbonKeyCode\":53,\"carbonModifiers\":0}";
       };
     };
   };
