@@ -255,6 +255,9 @@ in
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/AGENTS.md";
   home.file.".gemini/config/AGENTS.md".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/AGENTS.md";
+  home.file.".gemini/config/skills".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.gemini/config/skills";
+
 
   # Antigravity CLI configurations
   home.file.".gemini/antigravity-cli/settings.json" = {
