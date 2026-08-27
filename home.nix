@@ -38,7 +38,7 @@ in
     stylua
     lua-language-server
     ruff
-    pyright
+    basedpyright
     gopls
     jdt-language-server
     openjdk21

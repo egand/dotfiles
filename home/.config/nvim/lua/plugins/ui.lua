@@ -10,6 +10,7 @@ return {
         { '<leader>g', group = 'git' },
         { '<leader>s', group = 'search' },
         { '<leader>u', group = 'ui / toggles' },
+        { '<leader>x', group = 'trouble / diagnostics' },
       },
     },
   },
