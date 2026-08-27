@@ -58,6 +58,11 @@ repos:
       - id: check-added-large-files
       - id: check-merge-conflict
 
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.24.0
+    hooks:
+      - id: gitleaks
+
   - repo: local
     hooks:
       - id: spotless-check
@@ -99,7 +104,60 @@ build:
     ./gradlew build
 ```
 
-## 5. Verification
+## 5. CI/CD Pipeline (`.github/workflows/ci.yml`)
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: extractions/setup-just@v2
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version-file: .java-version
+          cache: gradle
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+      - name: Run verification
+        run: just check
+```
+
+## 6. Dependabot (`.github/dependabot.yml`)
+
+```yaml
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+```
+
+## 7. PR Template (`.github/pull_request_template.md`)
+
+```markdown
+## Summary
+<!-- Brief description of changes -->
+
+## Verification
+- [ ] `just check` passes locally
+- [ ] Tests added/updated
+```
+
+## 8. Verification
 ```bash
 just install-hooks
 just fix

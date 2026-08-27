@@ -47,6 +47,11 @@ repos:
       - id: check-added-large-files
       - id: check-merge-conflict
 
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.24.0
+    hooks:
+      - id: gitleaks
+
   - repo: https://github.com/golangci/golangci-lint
     rev: v1.64.5
     hooks:
@@ -89,8 +94,61 @@ build:
     go build -v -o bin/app ./...
 ```
 
-## 5. Verification
+## 5. CI/CD Pipeline (`.github/workflows/ci.yml`)
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: extractions/setup-just@v2
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Install golangci-lint
+        run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.64.5
+      - name: Run verification
+        run: just check
+```
+
+## 6. Dependabot (`.github/dependabot.yml`)
+
+```yaml
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+```
+
+## 7. PR Template (`.github/pull_request_template.md`)
+
+```markdown
+## Summary
+<!-- Brief description of changes -->
+
+## Verification
+- [ ] `just check` passes locally
+- [ ] Tests added/updated
+```
+
+## 8. Verification
 ```bash
 just install-hooks
+just fix
 just check
 ```
