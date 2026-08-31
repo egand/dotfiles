@@ -61,8 +61,8 @@ repos:
 ## 4. Command Runner (`justfile`)
 
 ```makefile
-# Run all quality checks (lint, format check, tests)
-check: lint format-check test
+# Run all quality checks (lint, format check, tests, audit)
+check: lint format-check test audit
 
 # Automatically fix format and imports
 fix:
@@ -77,9 +77,13 @@ format-check:
 lint:
     golangci-lint run ./...
 
-# Run test suite with race detector
+# Run test suite with race detector and coverage
 test:
-    go test -v -race ./...
+    go test -v -race -coverprofile=coverage.out ./...
+
+# Audit dependencies for known vulnerabilities
+audit:
+    govulncheck ./...
 
 # Run pre-commit hooks on all files
 pre-commit:
@@ -114,8 +118,10 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
-      - name: Install golangci-lint
-        run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.64.5
+      - name: Install audit & lint tools
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.64.5
+          go install golang.org/x/vuln/cmd/govulncheck@latest
       - name: Run verification
         run: just check
 ```
@@ -128,11 +134,20 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      actions:
+        patterns:
+          - "*"
+
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      gomod-dependencies:
+        patterns:
+          - "*"
 ```
 
 ## 7. PR Template (`.github/pull_request_template.md`)
@@ -146,7 +161,35 @@ updates:
 - [ ] Tests added/updated
 ```
 
-## 8. Verification
+## 8. Containerization (Conditional: Web APIs / Daemons Only)
+
+Only create `Dockerfile` and `.dockerignore` when building deployable web services or daemons:
+
+```dockerfile
+# Multi-stage minimal distroless build
+FROM golang:1.24-alpine AS builder
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /app/bin/service .
+
+FROM gcr.io/distroless/static-debian12:nonroot AS runner
+WORKDIR /app
+COPY --from=builder /app/bin/service /app/service
+USER nonroot:nonroot
+ENTRYPOINT ["/app/service"]
+```
+
+`.dockerignore`:
+```
+.git
+bin
+coverage.out
+.pre-commit-config.yaml
+```
+
+## 9. Verification
 ```bash
 just install-hooks
 just fix

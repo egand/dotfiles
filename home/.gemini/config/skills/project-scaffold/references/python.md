@@ -12,7 +12,7 @@ uv init
 echo "3.14" > .python-version
 
 # Add standard development and quality dependencies
-uv add --dev ruff mypy pre-commit pytest pytest-asyncio
+uv add --dev ruff mypy pre-commit pytest pytest-asyncio pytest-cov pip-audit
 ```
 
 ## 2. Configuration (`pyproject.toml`)
@@ -80,8 +80,8 @@ repos:
 ## 4. Command Runner (`justfile`)
 
 ```makefile
-# Run all quality checks (lint, format check, type check, tests)
-check: lint format-check typecheck test
+# Run all quality checks (lint, format check, type check, tests, audit)
+check: lint format-check typecheck test audit
 
 # Automatically fix linting and formatting issues
 fix:
@@ -100,9 +100,13 @@ lint:
 typecheck:
     uv run mypy src
 
-# Run test suite
+# Run test suite with coverage
 test:
-    uv run pytest
+    uv run pytest --cov=src --cov-report=term-missing
+
+# Audit dependencies for security vulnerabilities
+audit:
+    uv run pip-audit
 
 # Run pre-commit hooks on all files
 pre-commit:
@@ -144,11 +148,20 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      actions:
+        patterns:
+          - "*"
+
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      pip-dependencies:
+        patterns:
+          - "*"
 ```
 
 ## 7. PR Template (`.github/pull_request_template.md`)
@@ -162,7 +175,39 @@ updates:
 - [ ] Tests added/updated
 ```
 
-## 8. Verification
+## 8. Containerization (Conditional: Web APIs / Daemons Only)
+
+Only create `Dockerfile` and `.dockerignore` when building deployable web services or daemons:
+
+```dockerfile
+# Multi-stage minimal uv build
+FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim AS builder
+WORKDIR /app
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev --no-install-project
+
+FROM python:3.14-slim AS runner
+WORKDIR /app
+COPY --from=builder /app/.venv /app/.venv
+COPY src ./src
+ENV PATH="/app/.venv/bin:$PATH"
+USER 65534:65534
+CMD ["python", "-m", "src.main"]
+```
+
+`.dockerignore`:
+```
+.git
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+.mypy_cache
+.ruff_cache
+tests
+```
+
+## 9. Verification
 ```bash
 just install-hooks
 just fix

@@ -12,7 +12,7 @@ description: >-
 
 Follow this procedure whenever initializing a new project or repository.
 
-## Universal 7-Step Workflow
+## Universal 8-Step Workflow
 
 ### Step 1: Initialize Git, Multi-Editor `.gitignore`, and `.editorconfig`
 Always include OS (`macos`), IDE (`visualstudiocode`, `jetbrains`), and language tags:
@@ -62,9 +62,10 @@ Ensure exact versions are pinned in standard dotfiles:
 
 ### Step 4: Standardize Command Runner (`justfile`)
 Create a `justfile` providing uniform recipes across all languages:
-- `just check`: Runs lint, format-check, typecheck, and tests in sequence.
+- `just check`: Runs lint, format-check, typecheck, tests, and audit in sequence.
 - `just fix`: Automatically fixes lint and formatting violations.
-- `just test`: Runs the test suite.
+- `just test`: Runs the test suite with code coverage tracking.
+- `just audit`: Runs package vulnerability scanning (`pip-audit`, `govulncheck`, `pnpm audit`, etc.).
 - `just pre-commit`: Runs pre-commit hooks on all files.
 - `just install-hooks`: Installs git pre-commit hooks locally.
 
@@ -78,10 +79,15 @@ Create `.pre-commit-config.yaml` with:
 ### Step 6: CI/CD, Dependabot & PR Templates
 Create GitHub workflows and templates:
 1. **CI Pipeline (`.github/workflows/ci.yml`)**: Trigger on `push` to `main` and `pull_request`, install toolchains with caching, and run `just check`.
-2. **Dependabot (`.github/dependabot.yml`)**: Automated weekly dependency checks for `github-actions` and language package managers.
+2. **Dependabot (`.github/dependabot.yml`)**: Monthly grouped dependency updates for `github-actions` and language package managers to batch updates into single pull requests and prevent PR noise.
 3. **PR Template (`.github/pull_request_template.md`)**: PR checklist confirming `just check` passed.
 
-### Step 7: Project Documentation & `AGENTS.md`
+### Step 7: Context-Aware Containerization (Conditional)
+Evaluate project architecture before adding Docker files:
+- **Scaffold Dockerfile & `.dockerignore` IF**: The project is a deployable web application, HTTP API, background service daemon, or if the user explicitly requested containerization.
+- **SKIP Dockerfile IF**: The project is a reusable library, SDK, CLI utility package, or purely local script/tooling.
+
+### Step 8: Project Documentation & `AGENTS.md`
 Generate baseline repository documentation:
 1. `README.md` with project overview, prerequisites, and quickstart commands (`just check`, `just test`).
 2. `LICENSE` (e.g. MIT / Apache-2.0 / Proprietary).

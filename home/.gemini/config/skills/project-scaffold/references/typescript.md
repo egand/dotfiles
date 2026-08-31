@@ -12,7 +12,7 @@ echo "22" > .node-version
 
 # Initialize package.json and install dependencies
 pnpm init
-pnpm add -D typescript @types/node @biomejs/biome vitest
+pnpm add -D typescript @types/node @biomejs/biome vitest @vitest/coverage-v8
 ```
 
 ## 2. TypeScript Configuration (`tsconfig.json`)
@@ -91,8 +91,8 @@ repos:
 ## 5. Command Runner (`justfile`)
 
 ```makefile
-# Run all quality checks (lint, format check, type check, tests)
-check: lint format-check typecheck test
+# Run all quality checks (lint, format check, type check, tests, audit)
+check: lint format-check typecheck test audit
 
 # Automatically fix linting and formatting issues
 fix:
@@ -110,9 +110,13 @@ lint:
 typecheck:
     pnpm exec tsc --noEmit
 
-# Run test suite
+# Run test suite with coverage
 test:
-    pnpm exec vitest run
+    pnpm exec vitest run --coverage
+
+# Audit dependencies for known vulnerabilities
+audit:
+    pnpm audit
 
 # Run pre-commit hooks on all files
 pre-commit:
@@ -162,11 +166,20 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      actions:
+        patterns:
+          - "*"
+
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      npm-dependencies:
+        patterns:
+          - "*"
 ```
 
 ## 8. PR Template (`.github/pull_request_template.md`)
@@ -180,7 +193,40 @@ updates:
 - [ ] Tests added/updated
 ```
 
-## 9. Verification
+## 9. Containerization (Conditional: Web APIs / Daemons Only)
+
+Only create `Dockerfile` and `.dockerignore` when building deployable web services or daemons:
+
+```dockerfile
+# Multi-stage minimal Node/pnpm build
+FROM node:22-alpine AS builder
+WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@latest --activate
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+COPY . .
+RUN pnpm run build
+
+FROM node:22-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+RUN corepack enable && corepack prepare pnpm@latest --activate
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --prod --frozen-lockfile
+COPY --from=builder /app/dist ./dist
+USER node
+CMD ["node", "dist/index.js"]
+```
+
+`.dockerignore`:
+```
+.git
+node_modules
+dist
+coverage
+```
+
+## 10. Verification
 ```bash
 just install-hooks
 just fix

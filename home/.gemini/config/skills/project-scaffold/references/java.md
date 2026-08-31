@@ -16,12 +16,13 @@ gradle init --type java-application --dsl kotlin --test-framework junit-jupiter
 
 ## 2. Build Configuration (`build.gradle.kts`)
 
-Ensure `build.gradle.kts` includes Java 21 toolchain and Spotless plugin for zero-drift formatting:
+Ensure `build.gradle.kts` includes Java 21 toolchain, JaCoCo, and Spotless plugin for zero-drift formatting:
 
 ```kotlin
 plugins {
     java
     application
+    jacoco
     id("com.diffplug.spotless") version "7.0.2"
 }
 
@@ -42,6 +43,15 @@ spotless {
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
 }
 ```
 
@@ -76,7 +86,7 @@ repos:
 ## 4. Command Runner (`justfile`)
 
 ```makefile
-# Run all quality checks (spotless check, build, tests)
+# Run all quality checks (spotless check, build, tests with coverage)
 check: lint test
 
 # Automatically fix formatting issues with Spotless
@@ -87,9 +97,9 @@ fix:
 lint:
     ./gradlew spotlessCheck
 
-# Run test suite
+# Run test suite with JaCoCo coverage report
 test:
-    ./gradlew test
+    ./gradlew test jacocoTestReport
 
 # Run pre-commit hooks on all files
 pre-commit:
@@ -120,7 +130,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: extractions/setup-just@v2
-      - uses: actions/setup-java@v4
+      - actions/setup-java@v4
         with:
           distribution: temurin
           java-version-file: .java-version
@@ -139,11 +149,20 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      actions:
+        patterns:
+          - "*"
+
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      gradle-dependencies:
+        patterns:
+          - "*"
 ```
 
 ## 7. PR Template (`.github/pull_request_template.md`)
@@ -157,7 +176,34 @@ updates:
 - [ ] Tests added/updated
 ```
 
-## 8. Verification
+## 8. Containerization (Conditional: Web APIs / Daemons Only)
+
+Only create `Dockerfile` and `.dockerignore` when building deployable web services or daemons:
+
+```dockerfile
+# Multi-stage minimal JRE build
+FROM gradle:8.12-jdk21-alpine AS builder
+WORKDIR /app
+COPY build.gradle.kts settings.gradle.kts ./
+COPY src ./src
+RUN gradle build --no-daemon -x test
+
+FROM eclipse-temurin:21-jre-alpine AS runner
+WORKDIR /app
+COPY --from=builder /app/build/libs/*.jar app.jar
+USER 65534:65534
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+`.dockerignore`:
+```
+.git
+.gradle
+build
+bin
+```
+
+## 9. Verification
 ```bash
 just install-hooks
 just fix
