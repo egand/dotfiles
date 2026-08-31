@@ -81,6 +81,7 @@ Create GitHub workflows and templates:
 1. **CI Pipeline (`.github/workflows/ci.yml`)**: Trigger on `push` to `main` and `pull_request`, install toolchains with caching, and run `just check`.
 2. **Dependabot (`.github/dependabot.yml`)**: Monthly grouped dependency updates for `github-actions` and language package managers to batch updates into single pull requests and prevent PR noise.
 3. **PR Template (`.github/pull_request_template.md`)**: PR checklist confirming `just check` passed.
+4. **Branch Protection & Rulesets**: Enable automatic branch deletion on merge (`delete_branch_on_merge: true`) while creating a GitHub Ruleset protecting release branches (`main`, `develop`) with `deletion` and `non_fast_forward` prevention rules so core branches are never deleted.
 
 ### Step 7: Context-Aware Containerization (Conditional)
 Evaluate project architecture before adding Docker files:
