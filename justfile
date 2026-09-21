@@ -3,11 +3,15 @@ export PATH := "/opt/homebrew/bin:/opt/homebrew/sbin:" + env_var('PATH')
 # Default recipe (alias for sync)
 default: sync
 
+# Run complete setup on a fresh machine
+setup: folders keyboard sync paste brew runtimes macos touchid
+
 # Mirror configs to $HOME via GNU Stow
 sync:
     mkdir -p "$HOME/.config" "$HOME/Library/LaunchAgents" "$HOME/.local/bin"
     (cd stow && stow -t "$HOME" --restow *)
     @if [ -f scripts/smart-paste.swift ] && [ ! -f "$HOME/.local/bin/smart-paste" ]; then just paste; fi
+    @if [ -f scripts/awdl ] && [ ! -L "$HOME/.local/bin/awdl" ]; then ln -sfn "$PWD/scripts/awdl" "$HOME/.local/bin/awdl"; fi
 
 # Compile smart-paste Swift helper for Herdr multiplexer
 paste:
@@ -44,7 +48,11 @@ folders:
 
 # Run daily upgrade (Homebrew, Mise, and Stow sync)
 upgrade:
-    brew update && brew upgrade && mise upgrade && just sync
+    brew update && brew upgrade
+    brew upgrade --cask --no-quarantine
+    -xattr -r -d com.apple.quarantine /Applications/Ghostty.app 2>/dev/null
+    mise upgrade
+    just sync
 
 # Check git status and verify stow symlinks
 status:

@@ -12,7 +12,7 @@
 		<string>/opt/homebrew/bin:/opt/homebrew/sbin:/Users/egand/.antigravity/antigravity/bin:/Users/egand/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
 	</dict>
 	<key>KeepAlive</key>
-	<true/>
+	<false/>
 	<key>ProgramArguments</key>
 	<array>
 		<string>/bin/sh</string>
@@ -20,7 +20,7 @@
 		<string>exec /Users/egand/Developer/projects/agent-telegram-bridge/.venv/bin/python -m agent_telegram_bridge.main start</string>
 	</array>
 	<key>RunAtLoad</key>
-	<true/>
+	<false/>
 	<key>StandardErrorPath</key>
 	<string>/tmp/agent-telegram-bridge.err.log</string>
 	<key>StandardOutPath</key>

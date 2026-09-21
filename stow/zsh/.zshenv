@@ -1,9 +1,11 @@
 # Environment Variables & System PATH
 # Sourced for all zsh instances (interactive and non-interactive)
 
-# Homebrew environment
-if [[ -f /opt/homebrew/bin/brew ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+if [[ -d /opt/homebrew ]]; then
+  export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+  export HOMEBREW_PREFIX="/opt/homebrew"
+  export HOMEBREW_CELLAR="/opt/homebrew/Cellar"
+  export HOMEBREW_REPOSITORY="/opt/homebrew"
 fi
 
 # Antigravity & User Local Binaries

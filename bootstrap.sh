@@ -41,43 +41,18 @@ fi
 echo "==> Step 4: Installing Just and GNU Stow..."
 brew install just stow
 
-# Step 5: Provision Workspace Folders & Keyboard
-echo "==> Step 5: Provisioning workspace folders and keyboard layout..."
-just --justfile "$DIR/justfile" folders
-just --justfile "$DIR/justfile" keyboard
-
-# Step 6: Backup default shell configs & Mirror Dotfiles via GNU Stow
-echo "==> Step 6: Stowing configuration files to $HOME..."
+# Step 5: Full System Setup via Just
+echo "==> Step 5: Running full system setup (folders, keyboard, sync, paste, brew, runtimes, macos, touchid)..."
 for f in "$HOME/.zshrc" "$HOME/.zshenv" "$HOME/.zprofile"; do
   if [ -f "$f" ] && [ ! -L "$f" ]; then
     echo "    Backing up default $f to $f.pre-dotfiles..."
     mv "$f" "$f.pre-dotfiles"
   fi
 done
-just --justfile "$DIR/justfile" sync
+just --justfile "$DIR/justfile" setup
 
-# Step 7: Compile Smart Paste Helper (Herdr Multiplexer Dependency)
-echo "==> Step 7: Compiling smart-paste Swift helper..."
-just --justfile "$DIR/justfile" paste
-
-# Step 8: Install Packages & Applications via Brewfile
-echo "==> Step 8: Installing packages, casks, and Nerd Fonts from Brewfile..."
-just --justfile "$DIR/justfile" brew
-
-# Step 9: Install Language Runtimes (Mise)
-echo "==> Step 9: Installing language runtimes via Mise..."
-just --justfile "$DIR/justfile" runtimes
-
-# Step 10: Apply macOS System Preferences
-echo "==> Step 10: Applying macOS system defaults..."
-just --justfile "$DIR/justfile" macos
-
-# Step 11: Configure Touch ID for sudo
-echo "==> Step 11: Configuring Touch ID for sudo..."
-just --justfile "$DIR/justfile" touchid
-
-# Step 12: Import Raycast Configuration
-echo "==> Step 12: Importing Raycast settings..."
+# Step 6: Import Raycast Configuration
+echo "==> Step 6: Importing Raycast settings..."
 if [ -f "$DIR/raycast/raycast.rayconfig" ]; then
   echo "    Opening Raycast configuration wizard..."
   open "$DIR/raycast/raycast.rayconfig"

@@ -4,18 +4,10 @@
 <dict>
 	<key>Label</key>
 	<string>daily-system-upgrade</string>
-	<key>EnvironmentVariables</key>
-	<dict>
-		<key>HOME</key>
-		<string>/Users/egand</string>
-		<key>PATH</key>
-		<string>/opt/homebrew/bin:/opt/homebrew/sbin:/Users/egand/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
-	</dict>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/bin/sh</string>
-		<string>-c</string>
-		<string>exec /Users/egand/.dotfiles/scripts/system-upgrade.sh</string>
+		<string>/bin/bash</string>
+		<string>/Users/egand/.dotfiles/scripts/system-upgrade.sh</string>
 	</array>
 	<key>StandardErrorPath</key>
 	<string>/tmp/daily-system-upgrade.err.log</string>

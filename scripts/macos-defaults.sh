@@ -7,7 +7,6 @@ echo "==> Applying macOS system defaults..."
 
 # Close any open System Settings panes to avoid overriding changes
 osascript -e 'tell application "System Settings" to quit' 2>/dev/null || true
-osascript -e 'tell application "System Preferences" to quit' 2>/dev/null || true
 
 # ---------------------------------------------------------
 # Global Domain (NSGlobalDomain)
@@ -23,9 +22,6 @@ defaults write NSGlobalDomain InitialKeyRepeat -int 20
 
 # Enable key repeat in Vim/Neovim (disable accent press-and-hold popup)
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
-
-# Automatically hide and show the menu bar
-defaults write NSGlobalDomain _HIHideMenuBar -bool true
 
 # Show all filename extensions in Finder
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
@@ -100,10 +96,6 @@ defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
 # Automatically empty items in the Trash after 30 days
 defaults write com.apple.finder FXRemoveOldTrashItems -bool true
 
-# Hide external/internal hard drives on desktop
-defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false
-defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool false
-
 # ---------------------------------------------------------
 # Screen Capture
 # ---------------------------------------------------------
@@ -127,15 +119,6 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool
 defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
 defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-
-# ---------------------------------------------------------
-# Screen Saver & Security
-# ---------------------------------------------------------
-echo "==> Configuring Screen Saver and Security..."
-
-# Require password immediately after sleep or screen saver begins
-defaults write com.apple.screensaver askForPassword -bool true
-defaults write com.apple.screensaver askForPasswordDelay -int 0
 
 # ---------------------------------------------------------
 # Desktop Services (.DS_Store suppression)
@@ -175,28 +158,6 @@ elif command -v sudo >/dev/null 2>&1; then
   fi
 else
   echo "    Warning: sudo not available, skipping pmset configuration."
-fi
-
-# ---------------------------------------------------------
-# Network / Gaming AWDL (Low-latency Wi-Fi)
-# ---------------------------------------------------------
-echo "==> Configuring Network / AWDL..."
-if ifconfig awdl0 >/dev/null 2>&1; then
-  if [ "$EUID" -eq 0 ]; then
-    ifconfig awdl0 down 2>/dev/null || true
-    echo "    awdl0 interface brought down for low-latency gaming."
-  elif command -v sudo >/dev/null 2>&1; then
-    if sudo -n true 2>/dev/null; then
-      sudo ifconfig awdl0 down 2>/dev/null || true
-      echo "    awdl0 interface brought down for low-latency gaming."
-    else
-      echo "    awdl0 interface present (requires sudo privileges to bring down)."
-    fi
-  else
-    echo "    awdl0 interface present (requires sudo to bring down)."
-  fi
-else
-  echo "    awdl0 interface not present on this hardware."
 fi
 
 # ---------------------------------------------------------
