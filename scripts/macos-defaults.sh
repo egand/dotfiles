@@ -66,6 +66,16 @@ defaults write com.apple.dock show-recents -bool false
 # Do not automatically rearrange Spaces based on most recent use
 defaults write com.apple.dock mru-spaces -bool false
 
+# Disable all Hot Corners (Top-Left, Top-Right, Bottom-Left, Bottom-Right: 1 = None, 0 = No modifier)
+defaults write com.apple.dock wvous-tl-corner -int 1
+defaults write com.apple.dock wvous-tl-modifier -int 0
+defaults write com.apple.dock wvous-tr-corner -int 1
+defaults write com.apple.dock wvous-tr-modifier -int 0
+defaults write com.apple.dock wvous-bl-corner -int 1
+defaults write com.apple.dock wvous-bl-modifier -int 0
+defaults write com.apple.dock wvous-br-corner -int 1
+defaults write com.apple.dock wvous-br-modifier -int 0
+
 # ---------------------------------------------------------
 # Finder Preferences
 # ---------------------------------------------------------
