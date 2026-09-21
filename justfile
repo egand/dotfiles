@@ -5,8 +5,14 @@ default: sync
 
 # Mirror configs to $HOME via GNU Stow
 sync:
-    mkdir -p "$HOME/.config" "$HOME/Library/LaunchAgents"
+    mkdir -p "$HOME/.config" "$HOME/Library/LaunchAgents" "$HOME/.local/bin"
     (cd stow && stow -t "$HOME" --restow *)
+    @if [ -f scripts/smart-paste.swift ] && [ ! -f "$HOME/.local/bin/smart-paste" ]; then just paste; fi
+
+# Compile smart-paste Swift helper for Herdr multiplexer
+paste:
+    mkdir -p "$HOME/.local/bin"
+    swiftc -O scripts/smart-paste.swift -o "$HOME/.local/bin/smart-paste"
 
 # Unlink a specific stow package
 unlink package:
@@ -15,6 +21,10 @@ unlink package:
 # Install and update packages via Homebrew Bundle
 brew:
     brew bundle --file=Brewfile
+
+# Install polyglot runtime toolchains declared in mise
+runtimes:
+    @if command -v mise >/dev/null 2>&1; then mise install; fi
 
 # Apply macOS system preferences
 macos:

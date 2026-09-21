@@ -28,8 +28,8 @@ fi
 # 3. Resync dotfile symlinks via Stow
 if command -v stow >/dev/null 2>&1 && [ -d "$DIR/stow" ]; then
   echo "==> Resyncing dotfile symlinks..."
-  mkdir -p "$HOME/.config"
-  stow -d "$DIR/stow" -t "$HOME" --restow */ || true
+  mkdir -p "$HOME/.config" "$HOME/Library/LaunchAgents"
+  (cd "$DIR/stow" && stow -t "$HOME" --restow *) || true
 fi
 
 echo "==> [$(date '+%Y-%m-%d %H:%M:%S')] System upgrade completed successfully."
