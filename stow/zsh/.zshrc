@@ -92,3 +92,52 @@ alias lg="lazygit"
 
 # System upgrade
 alias upgrade="just -d ~/.dotfiles upgrade"
+
+# ==============================================================================
+# Homebrew Auto-Sync Wrapper
+# Automatically records installed/uninstalled packages in ~/.dotfiles/Brewfile
+# ==============================================================================
+brew() {
+  command brew "$@"
+  local exit_code=$?
+
+  if [[ $exit_code -eq 0 && ("$1" == "install" || "$1" == "uninstall" || "$1" == "remove") ]]; then
+    local brewfile="$HOME/.dotfiles/Brewfile"
+    if [[ -f "$brewfile" ]]; then
+      local action="$1"
+      shift
+      local is_cask=0
+      local pkgs=()
+
+      for arg in "$@"; do
+        if [[ "$arg" == "--cask" ]]; then
+          is_cask=1
+        elif [[ "$arg" != -* ]]; then
+          pkgs+=("$arg")
+        fi
+      done
+
+      for pkg in "${pkgs[@]}"; do
+        if [[ "$action" == "install" ]]; then
+          local entry
+          if (( is_cask )); then
+            entry="cask \"$pkg\""
+          else
+            entry="brew \"$pkg\""
+          fi
+          if ! grep -qF "$entry" "$brewfile"; then
+            echo "$entry" >> "$brewfile"
+            echo "📝 Added $entry to ~/.dotfiles/Brewfile"
+          fi
+        elif [[ "$action" == "uninstall" || "$action" == "remove" ]]; then
+          if grep -E -q "^(brew|cask) \"$pkg\"" "$brewfile"; then
+            sed -i '' -E "/^(brew|cask) \"$pkg\"/d" "$brewfile"
+            echo "🗑️  Removed \"$pkg\" from ~/.dotfiles/Brewfile"
+          fi
+        fi
+      done
+    fi
+  fi
+
+  return $exit_code
+}
