@@ -1,11 +1,11 @@
 ---
 name: zenspec
-description: Use whenever creating, proposing, or reviewing implementation plans, architectural designs, technical RFCs, specifications, or HTML UI mockups. Launches the interactive ZenSpec browser reviewer to collect line-level feedback and plan approval before coding.
+description: Use whenever creating, proposing, generating, or reviewing ANY artifacts, documents, implementation plans, architectural designs, technical RFCs, specifications, research reports, brainstorming documents, or HTML UI mockups. Launches the interactive ZenSpec browser reviewer to display the document and collect line-level feedback and approval.
 license: MIT
 metadata:
   author: egand
-  argument-hint: <what the plan, RFC, or UI mock should specify>
-  hermes-tags: plan, implementation-plan, architecture, rfc, spec, review, markdown, html, approval, feedback
+  argument-hint: <what the artifact, plan, RFC, or document should specify>
+  hermes-tags: artifact, document, plan, implementation-plan, architecture, rfc, spec, report, review, markdown, html, approval, feedback
   hermes-category: productivity
 ---
 
@@ -15,9 +15,27 @@ ZenSpec opens Markdown or HTML documents in a browser for interactive line-level
 
 ## Workflow
 
-1. **Write Documentation**:
-   - Write the document directly to the project's documentation directory: `docs/plans/<topic>.md`.
+1. **Write Documentation / Artifact**:
+   - Write the document directly to the project's documentation directory: `docs/plans/<topic>.md`, `docs/reports/<topic>.md`, or `docs/<topic>.md`.
+   - Never write to hidden brain directories with `RequestFeedback: true`.
    - Format with standard GitHub-flavored Markdown, YAML frontmatter, KaTeX math (`$...$`), Mermaid diagrams (` ```mermaid `), or interactive question callouts (`> [!QUESTION]`, `> [!QUESTION:MULTI]`, `> [!QUESTION:RATING]`).
+   - **Canonical Question Syntax**:
+     - Single-choice with recommendation:
+       ```markdown
+       > [!QUESTION] Which database should we use?
+       > - [x] **(Recommended) PostgreSQL**: Reliable ACID compliance.
+       > - [ ] SQLite: Embedded simplicity.
+       ```
+     - Multiline heading and description with standard bullet list:
+       ```markdown
+       > [!QUESTION]
+       > ### 1. Workforce Simulation Depth
+       > Which labor model fits your vision best?
+       > - **Macro Allocation (Frostpunk Style)**: Buildings have worker headcounts.
+       > - **(Recommended) Micro Pawn Agents (RimWorld Style)**: Individual physical characters.
+       ```
+     - ZenSpec automatically appends an empty custom write-in card (`Other: Type custom answer...`) at the bottom of the proposals so reviewers can always provide a custom answer.
+   - **Mermaid Diagram Invariant**: Never use Markdown list syntax (e.g. `1. `, `2. `, `- `, `* `) inside Mermaid diagram node labels or subgraph titles. Use `[Step 1: Description]`, `[Part 1: Description]`, or `[(1) Description]` instead. Mermaid's label renderer does not support list AST nodes and will emit an `unsupported markdown: list` error.
 
 2. **Open the Review Session & Wait for Feedback (Mandatory Polling)**:
    - Run `zenspec <file>` directly. It opens the browser AND automatically waits/polls for human reviewer feedback or plan approval. When feedback or approval arrives, it outputs the JSON payload to stdout and exits with code 0:

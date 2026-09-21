@@ -1,0 +1,30 @@
+[user]
+	name = Enrico Gandaglia
+	email = e.gandaglia@gmail.com
+
+[init]
+	defaultBranch = develop
+
+[core]
+	pager = delta
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+	light = false
+	side-by-side = true
+	line-numbers = true
+
+[merge]
+	conflictstyle = zdiff3
+
+[diff]
+	colorMoved = default
+
+[pull]
+	rebase = true
+
+[push]
+	autoSetupRemote = true

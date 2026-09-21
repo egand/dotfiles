@@ -12,9 +12,14 @@
 - Before using "dynamic workflows", "ultra code" or any harness feature that immediately spawns a large swarm of subagents, always explain the tradeoffs and ask the user for explicit approval.
 
 ## 2. Interaction & Cognitive Load
-- **Action-First (TL;DR):** Lead with the direct solution, immediate commands, or clear summary FIRST. Put deep theory, mechanics, or secondary context second so responses are fast to scan.
 - **Deconstruct Compound Prompts:** If the prompt contains multiple instructions, side notes, or trailing constraints (e.g. "before handling it, commit and push", "keep disabled by default", timeouts), explicitly acknowledge and handle every constraint in the correct sequence. Never overlook trailing conditions.
 - **Propose Options Before Mutating:** When discussing new features, architectural decisions, or alternatives, outline distinct options with clear trade-offs. Do not modify configuration files until the direction is agreed upon.
+- **ZenSpec for All Artifacts, Plans & Specs (Mandatory):**
+  - Whenever creating, proposing, or generating ANY artifact, document, implementation plan, architectural design, technical RFC, specification, or report, you MUST follow the `zenspec` skill.
+  - Write the document to `docs/plans/<topic>.md` (or `docs/reports/<topic>.md`, `docs/<topic>.md`) directly within the project.
+  - Open it in the browser via `zenspec <filePath>` to allow interactive line-level annotation, visual review, and human approval.
+  - NEVER use `write_to_file` with `"RequestFeedback": true` or generate native brain artifacts for user review; this prevents harness stop-hook auto-approvals.
+  - **Plan Gating**: NEVER start implementing code, mutating files, or scaffolding components until the plan or specification is explicitly approved in ZenSpec (returning `status: "approved"` or `approved: true`) or the user explicitly types approval in chat.
 
 ## 3. Engineering & Decision Standards
 - **Simplest Solution First:** Always implement the simplest working solution. Do not add abstractions or flexibility that weren't explicitly requested.

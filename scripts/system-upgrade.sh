@@ -1,40 +1,35 @@
 #!/usr/bin/env bash
-# Complete system upgrade: Homebrew packages + Nix Flake + Darwin switch + Git commit
+# Complete native system upgrade: Homebrew packages + Mise runtimes + Stow sync
 set -euo pipefail
 
-export PATH="/opt/homebrew/bin:/nix/var/nix/profiles/default/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$HOME/.local/bin:$PATH"
 export HOMEBREW_CASK_OPTS="--no-quarantine"
+export HOMEBREW_NO_QUARANTINE=1
 export HOMEBREW_NO_ANALYTICS=1
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 
-echo "==> [$(date '+%Y-%m-%d %H:%M:%S')] Starting system upgrade..."
+echo "==> [$(date '+%Y-%m-%d %H:%M:%S')] Starting native system upgrade..."
 
 # 1. Upgrade Homebrew formulae & GUI casks
 if command -v brew >/dev/null 2>&1; then
   echo "==> Upgrading Homebrew packages..."
   brew update
   brew upgrade || true
-  brew upgrade --cask || true
+  brew upgrade --cask --no-quarantine || true
+  xattr -r -d com.apple.quarantine /Applications/Ghostty.app 2>/dev/null || true
 fi
 
-# 2. Update Nix Flake dependencies & apply rebuild
-if [ -d "$DIR" ] && command -v nix >/dev/null 2>&1; then
-  echo "==> Updating Nix Flake lockfile..."
-  nix flake update --flake "$DIR"
+# 2. Upgrade Mise language runtimes and global tools
+if command -v mise >/dev/null 2>&1; then
+  echo "==> Upgrading Mise tools..."
+  mise upgrade || true
+fi
 
-  echo "==> Applying darwin-rebuild switch..."
-  if command -v darwin-rebuild >/dev/null 2>&1; then
-    sudo darwin-rebuild switch --flake "$DIR#mac"
-  else
-    sudo nix run github:nix-darwin/nix-darwin/nix-darwin-26.05#darwin-rebuild -- switch --flake "$DIR#mac"
-  fi
-
-  # 3. Create a dedicated commit for flake.lock if there are changes
-  if ! git -C "$DIR" diff --quiet flake.lock 2>/dev/null; then
-    git -C "$DIR" add flake.lock
-    git -C "$DIR" commit -m "chore(flake): update lockfile" || true
-    echo "    Updated flake.lock committed."
-  fi
+# 3. Resync dotfile symlinks via Stow
+if command -v stow >/dev/null 2>&1 && [ -d "$DIR/stow" ]; then
+  echo "==> Resyncing dotfile symlinks..."
+  mkdir -p "$HOME/.config"
+  stow -d "$DIR/stow" -t "$HOME" --restow */ || true
 fi
 
 echo "==> [$(date '+%Y-%m-%d %H:%M:%S')] System upgrade completed successfully."

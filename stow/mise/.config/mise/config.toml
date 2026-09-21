@@ -1,0 +1,11 @@
+[settings]
+trusted_config_paths = [
+  "~/Developer/projects",
+  "~/Developer/repos",
+]
+
+[tools]
+node = "lts"
+python = "latest"
+go = "latest"
+java = "openjdk-21"

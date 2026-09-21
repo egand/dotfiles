@@ -1,0 +1,51 @@
+export PATH := "/opt/homebrew/bin:/opt/homebrew/sbin:" + env_var('PATH')
+
+# Default recipe (alias for sync)
+default: sync
+
+# Mirror configs to $HOME via GNU Stow
+sync:
+    mkdir -p "$HOME/.config" "$HOME/Library/LaunchAgents"
+    (cd stow && stow -t "$HOME" --restow *)
+
+# Unlink a specific stow package
+unlink package:
+    (cd stow && stow -t "$HOME" -D {{ package }})
+
+# Install and update packages via Homebrew Bundle
+brew:
+    brew bundle --file=Brewfile
+
+# Apply macOS system preferences
+macos:
+    bash scripts/macos-defaults.sh
+
+# Configure Touch ID authentication for sudo
+touchid:
+    bash scripts/setup-touchid.sh
+
+# Install custom keyboard layout
+keyboard:
+    bash scripts/setup-keyboard.sh
+
+# Create clean developer and personal workspace taxonomy
+folders:
+    bash scripts/setup-folders.sh
+
+# Run daily upgrade (Homebrew, Mise, and Stow sync)
+upgrade:
+    brew update && brew upgrade && mise upgrade && just sync
+
+# Check git status and verify stow symlinks
+status:
+    @git status -s
+    @echo "==> Verifying stow packages..."
+    @if command -v stow >/dev/null 2>&1 && [ -d stow ]; then \
+        (cd stow && stow -t "$HOME" --simulate --restow * 2>&1) || true; \
+    else \
+        echo "    (stow not installed or stow directory missing; skipping symlink check)"; \
+    fi
+
+# Full bootstrap on a fresh machine
+bootstrap:
+    bash bootstrap.sh

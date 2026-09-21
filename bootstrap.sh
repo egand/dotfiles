@@ -1,64 +1,72 @@
 #!/usr/bin/env bash
-# Takes a fresh Mac from nothing to a built nix-darwin config.
-# Run this once. After it finishes, use ./rebuild.sh for every later change.
+# Takes a fresh Mac from nothing to a fully configured developer workstation.
+# Idempotent 1-click bootstrap powered by Homebrew, GNU Stow, and Just.
 set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+echo "🚀 Starting macOS dotfiles bootstrap..."
 
-echo "==> Step 1: Determinate Nix"
-if command -v nix >/dev/null 2>&1; then
-  echo "    nix already installed, skipping"
+# Step 1: Xcode Command Line Tools
+echo "==> Step 1: Checking Xcode Command Line Tools..."
+if ! xcode-select -p >/dev/null 2>&1; then
+  echo "    Installing Xcode Command Line Tools..."
+  xcode-select --install
+  echo "    Please complete the Xcode Command Line Tools installation prompt, then re-run this script."
+  exit 1
 else
-  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix \
-    | sh -s -- install --no-confirm
-  # shellcheck disable=SC1091
-  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+  echo "    Xcode Command Line Tools already installed."
 fi
 
-echo "==> Step 2: symlink this repo to ~/.dotfiles"
+# Step 2: Homebrew
+echo "==> Step 2: Checking Homebrew..."
+if ! command -v brew >/dev/null 2>&1; then
+  echo "    Installing Homebrew..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+# Evaluate Homebrew environment for Apple Silicon or Intel
+if [ -x "/opt/homebrew/bin/brew" ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x "/usr/local/bin/brew" ]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+# Step 3: Symlink repository to ~/.dotfiles
+echo "==> Step 3: Linking dotfiles repository..."
 if [ "$DIR" != "$HOME/.dotfiles" ]; then
   ln -sfn "$DIR" "$HOME/.dotfiles"
 fi
 
-echo "==> Step 3: workspace folders and keyboard layout"
-if [ -f "$DIR/scripts/setup-folders.sh" ]; then
-  bash "$DIR/scripts/setup-folders.sh"
-fi
-if [ -f "$DIR/scripts/setup-keyboard.sh" ]; then
-  bash "$DIR/scripts/setup-keyboard.sh"
-fi
+# Step 4: Install Just and GNU Stow
+echo "==> Step 4: Installing Just and GNU Stow..."
+brew install just stow
 
-echo "==> Step 4: personalize the configured username"
-REAL_USER="$(whoami)"
-FLAKE_USER="$(sed -nE 's/^[[:space:]]*user = "([^"]+)";.*/\1/p' "$DIR/flake.nix" | head -n1)"
-if [ -z "$FLAKE_USER" ]; then
-  echo "    Could not find the single \"user = \" line in flake.nix."
-  echo "    Edit flake.nix yourself before continuing."
-  exit 1
-elif [ "$FLAKE_USER" != "$REAL_USER" ]; then
-  echo "    flake.nix is configured for user \"$FLAKE_USER\", but you are \"$REAL_USER\"."
-  read -r -p "    Rewrite flake.nix's \"user = \" line to \"$REAL_USER\"? [y/N] " REPLY
-  if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
-    sed -i '' -E "s/^([[:space:]]*user = \")[^\"]+(\";.*)/\1${REAL_USER}\2/" "$DIR/flake.nix"
-    echo "    Updated. Review the change with: git diff flake.nix"
-  else
-    echo "    Skipped. Edit the single \"user = \" line in flake.nix yourself before continuing."
-    exit 1
-  fi
-else
-  echo "    flake.nix already matches \"$REAL_USER\", nothing to do."
-fi
+# Step 5: Provision Workspace Folders & Keyboard
+echo "==> Step 5: Provisioning workspace folders and keyboard layout..."
+just --justfile "$DIR/justfile" folders
+just --justfile "$DIR/justfile" keyboard
 
-echo "==> Step 5: first darwin-rebuild switch (pinned to nix-darwin-26.05)"
-NIX_BIN="$(command -v nix)"
-sudo "$NIX_BIN" run github:nix-darwin/nix-darwin/nix-darwin-26.05#darwin-rebuild -- \
-  switch --flake ~/.dotfiles#mac
+# Step 6: Mirror Dotfiles via GNU Stow
+echo "==> Step 6: Stowing configuration files to $HOME..."
+just --justfile "$DIR/justfile" sync
 
-echo "==> Step 6: import Raycast configuration"
+# Step 7: Install Packages & Applications via Brewfile
+echo "==> Step 7: Installing packages, casks, and Nerd Fonts from Brewfile..."
+just --justfile "$DIR/justfile" brew
+
+# Step 8: Apply macOS System Preferences
+echo "==> Step 8: Applying macOS system defaults..."
+just --justfile "$DIR/justfile" macos
+
+# Step 9: Configure Touch ID for sudo
+echo "==> Step 9: Configuring Touch ID for sudo..."
+just --justfile "$DIR/justfile" touchid
+
+# Step 10: Import Raycast Configuration
+echo "==> Step 10: Importing Raycast settings..."
 if [ -f "$DIR/raycast/raycast.rayconfig" ]; then
-  echo "    Opening Raycast configuration import wizard..."
+  echo "    Opening Raycast configuration wizard..."
   open "$DIR/raycast/raycast.rayconfig"
 fi
 
-echo "==> Done. Use ./rebuild.sh for future changes."
-
+echo "✨ Bootstrap completed successfully! Please restart your terminal session or log out to apply all changes."
