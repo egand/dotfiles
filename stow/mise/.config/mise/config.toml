@@ -6,9 +6,9 @@ trusted_config_paths = [
 
 [tools]
 node = "lts"
-python = "3.12"
+python = "3.14"
 go = "latest"
 java = "openjdk-21"
 gradle = "latest"
 maven = "latest"
-dotnet = "8.0"
+dotnet = "10.0"
