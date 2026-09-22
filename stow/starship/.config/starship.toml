@@ -1,10 +1,99 @@
-add_newline = false
-format = "$directory$git_branch$git_status$cmd_duration$line_break$character"
+"$schema" = "https://starship.rs/config-schema.json"
 
-[character]
-success_symbol = "[❯](purple)"
-error_symbol = "[❯](red)"
+format = """$directory$git_branch$git_status$nodejs$python$golang$java$rust$dotnet$cmd_duration$status$line_break$character"""
+
+palette = "catppuccin_frappe"
+add_newline = false
+
+[directory]
+style = "bold lavender"
+truncation_length = 4
+truncate_to_repo = true
+format = "[$path]($style) "
+
+[git_branch]
+symbol = " "
+style = "bold mauve"
+format = "on [$symbol$branch]($style) "
+
+[git_status]
+style = "bold red"
+format = '([\[$all_status$ahead_behind\]]($style) )'
+ahead = "⇡${count} "
+behind = "⇣${count} "
+diverged = "⇕⇡${ahead_count}⇣${behind_count} "
+modified = "!${count} "
+staged = "+${count} "
+untracked = "?${count} "
+
+[nodejs]
+symbol = " "
+style = "bold green"
+format = "via [$symbol($version )]($style)"
+
+[python]
+symbol = " "
+style = "bold yellow"
+format = 'via [${symbol}${pyenv_prefix}(${version} )]($style)'
+
+[golang]
+symbol = " "
+style = "bold sapphire"
+format = "via [$symbol($version )]($style)"
+
+[java]
+symbol = " "
+style = "bold maroon"
+format = "via [$symbol($version )]($style)"
+
+[rust]
+symbol = " "
+style = "bold peach"
+format = "via [$symbol($version )]($style)"
+
+[dotnet]
+symbol = "󰌛 "
+style = "bold blue"
+format = "via [$symbol($version )]($style)"
 
 [cmd_duration]
 min_time = 2000
-format = "[$duration]($style) "
+style = "bold subtext0"
+format = "took [$duration]($style) "
+
+[status]
+disabled = false
+style = "bold red"
+format = "[$symbol$status]($style) "
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+
+[palettes.catppuccin_frappe]
+rosewater = "#f2d5cf"
+flamingo = "#eebebe"
+pink = "#f4b8e4"
+mauve = "#ca9ee6"
+red = "#e78284"
+maroon = "#ea999c"
+peach = "#ef9f76"
+yellow = "#e5c890"
+green = "#a6d189"
+teal = "#81c8be"
+sky = "#99d1db"
+sapphire = "#85c1dc"
+blue = "#8caaee"
+lavender = "#babbf1"
+text = "#c6d0f5"
+subtext1 = "#b5bfe2"
+subtext0 = "#a5adce"
+overlay2 = "#949cbb"
+overlay1 = "#838ba7"
+overlay0 = "#737994"
+surface2 = "#626880"
+surface1 = "#51576d"
+surface0 = "#414559"
+base = "#303446"
+mantle = "#292c3c"
+crust = "#232634"

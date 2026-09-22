@@ -111,9 +111,9 @@ defaults write com.apple.finder FXRemoveOldTrashItems -bool true
 # ---------------------------------------------------------
 echo "==> Configuring Screen Capture..."
 
-mkdir -p "$HOME/Downloads"
-# Save screenshots to the Downloads folder
-defaults write com.apple.screencapture location -string "$HOME/Downloads"
+mkdir -p "$HOME/Pictures/Screenshots"
+# Save screenshots to dedicated Screenshots folder
+defaults write com.apple.screencapture location -string "$HOME/Pictures/Screenshots"
 
 # Disable dropshadow in window screenshots
 defaults write com.apple.screencapture disable-shadow -bool true
@@ -144,7 +144,7 @@ echo "==> Configuring OpenSuperWhisper preferences..."
 defaults write ru.starmel.OpenSuperWhisper hasCompletedOnboarding -bool true
 defaults write ru.starmel.OpenSuperWhisper selectedEngine -string "whisper"
 defaults write ru.starmel.OpenSuperWhisper whisperLanguage -string "en"
-defaults write ru.starmel.OpenSuperWhisper modifierOnlyHotkey -string "rightOption"
+defaults write ru.starmel.OpenSuperWhisper modifierOnlyHotkey -string "rightCommand"
 defaults write ru.starmel.OpenSuperWhisper startHiddenInMenuBar -bool true
 defaults write ru.starmel.OpenSuperWhisper autoPasteTranscription -bool true
 defaults write ru.starmel.OpenSuperWhisper KeyboardShortcuts_toggleRecord -string '{"carbonKeyCode":50,"carbonModifiers":2048}'

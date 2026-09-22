@@ -10,5 +10,6 @@ mkdir -p "$HOME/Developer/repos"
 mkdir -p "$HOME/Developer/scratch"
 
 mkdir -p "$HOME/Movies"
+mkdir -p "$HOME/Pictures/Screenshots"
 
 echo "    Directory structure created successfully."
