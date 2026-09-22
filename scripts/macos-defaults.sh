@@ -26,6 +26,9 @@ defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 # Show all filename extensions in Finder
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 
+# Keep menu bar visible on desktop (disable autohide for glanceable clock & status)
+defaults write NSGlobalDomain _HIHideMenuBar -bool false
+
 # ---------------------------------------------------------
 # Smart Substitutions (Disable for clean coding)
 # ---------------------------------------------------------
