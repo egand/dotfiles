@@ -1,4 +1,4 @@
-name: "Nix Flake Check"
+name: "Dotfiles Validation"
 
 on:
   push:
@@ -7,14 +7,33 @@ on:
     branches: [ "main", "develop" ]
 
 jobs:
-  check:
+  validate:
     runs-on: macos-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@main
+      - name: Install Just and GNU Stow
+        run: brew install just stow
 
-      - name: Run Flake Check
-        run: nix flake check --no-build
+      - name: Validate Shell Syntax
+        run: |
+          bash -n bootstrap.sh
+          bash -n scripts/*.sh
+          bash -n scripts/awdl
+          zsh -n stow/zsh/.zshrc
+          zsh -n stow/zsh/.zshenv
+
+      - name: Validate LaunchAgent Plists
+        run: plutil -lint stow/launchd/Library/LaunchAgents/*.plist
+
+      - name: Validate Justfile
+        run: |
+          just --fmt --check
+          just --list
+
+      - name: Simulate Stow
+        run: |
+          SANDBOX=$(mktemp -d)
+          (cd stow && stow -t "$SANDBOX" --restow *)
+          rm -rf "$SANDBOX"
