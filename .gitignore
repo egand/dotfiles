@@ -1,3 +1,30 @@
 .DS_Store
 /plans/
 .agent_input_image_*
+
+# Runtime logs, sockets, and lock files
+*.log
+*.sock
+session.json
+.plugins.lock
+
+# Application and Agent runtime caches, databases, and logs
+stow/**/brain/
+stow/**/cache/
+stow/**/conversations/
+stow/**/crashes/
+stow/**/log/
+stow/**/updater/
+stow/**/annotations/
+stow/**/bin/
+stow/**/builtin/
+stow/**/implicit/
+stow/**/presence/
+stow/**/projects/
+stow/**/*.db*
+stow/**/*.pb*
+stow/**/*.jsonl
+stow/**/*.timestamp
+stow/**/installation_id
+stow/**/.migrated
+stow/**/mcp_config.json

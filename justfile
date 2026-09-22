@@ -4,12 +4,22 @@ export PATH := "/opt/homebrew/bin:/opt/homebrew/sbin:" + env_var('PATH')
 default: sync
 
 # Run complete setup on a fresh machine
-setup: folders keyboard sync paste brew runtimes macos touchid
+setup:
+    @rm -f "${TMPDIR:-/tmp}/dotfiles-errors.log" "${TMPDIR:-/tmp}/dotfiles-brew.log"
+    @just folders || echo "⚠️ Folders setup reported an issue." >> "${TMPDIR:-/tmp}/dotfiles-errors.log"
+    @just keyboard || echo "⚠️ Keyboard setup reported an issue." >> "${TMPDIR:-/tmp}/dotfiles-errors.log"
+    @just sync || echo "⚠️ Sync setup reported an issue." >> "${TMPDIR:-/tmp}/dotfiles-errors.log"
+    @just paste || echo "⚠️ Paste helper compilation reported an issue." >> "${TMPDIR:-/tmp}/dotfiles-errors.log"
+    @just brew || echo "⚠️ Brew bundle reported an issue." >> "${TMPDIR:-/tmp}/dotfiles-errors.log"
+    @just runtimes || echo "⚠️ Mise runtimes setup reported an issue." >> "${TMPDIR:-/tmp}/dotfiles-errors.log"
+    @just macos || echo "⚠️ macOS defaults setup reported an issue." >> "${TMPDIR:-/tmp}/dotfiles-errors.log"
+    @just touchid || echo "⚠️ Touch ID setup reported an issue." >> "${TMPDIR:-/tmp}/dotfiles-errors.log"
+    @just summary
 
-# Mirror configs to $HOME via GNU Stow
+# Mirror configs to $HOME via GNU Stow without folding directories
 sync:
-    mkdir -p "$HOME/.config" "$HOME/Library/LaunchAgents" "$HOME/.local/bin"
-    (cd stow && stow -t "$HOME" --restow *)
+    mkdir -p "$HOME/.config/herdr" "$HOME/Library/LaunchAgents" "$HOME/.local/bin"
+    (cd stow && stow --no-folding -t "$HOME" --restow *)
     @if [ -f scripts/smart-paste.swift ] && [ ! -f "$HOME/.local/bin/smart-paste" ]; then just paste; fi
     @if [ -f scripts/awdl ] && [ ! -L "$HOME/.local/bin/awdl" ]; then ln -sfn "$PWD/scripts/awdl" "$HOME/.local/bin/awdl"; fi
 
@@ -22,9 +32,9 @@ paste:
 unlink package:
     (cd stow && stow -t "$HOME" -D {{ package }})
 
-# Install and update packages via Homebrew Bundle
+# Install and update packages via Homebrew Bundle (resilient)
 brew:
-    brew bundle --file=Brewfile
+    bash scripts/setup-brew.sh
 
 # Install polyglot runtime toolchains declared in mise
 runtimes:
@@ -46,6 +56,23 @@ keyboard:
 folders:
     bash scripts/setup-folders.sh
 
+# Display setup completion summary and any recorded errors
+summary:
+    @if [ -s "${TMPDIR:-/tmp}/dotfiles-errors.log" ]; then \
+        echo ""; \
+        echo "=============================================================================="; \
+        echo "⚠️  Setup completed with some non-fatal warnings or package failures:"; \
+        echo "=============================================================================="; \
+        cat "${TMPDIR:-/tmp}/dotfiles-errors.log"; \
+        echo "=============================================================================="; \
+        echo "Review the log files indicated above or re-run specific recipes (e.g. 'just brew')."; \
+    else \
+        echo ""; \
+        echo "=============================================================================="; \
+        echo "✨ Setup completed successfully! All steps passed without errors."; \
+        echo "=============================================================================="; \
+    fi
+
 # Run daily upgrade (Homebrew, Mise, and Stow sync)
 upgrade:
     brew update && brew upgrade
@@ -59,7 +86,7 @@ status:
     @git status -s
     @echo "==> Verifying stow packages..."
     @if command -v stow >/dev/null 2>&1 && [ -d stow ]; then \
-        (cd stow && stow -t "$HOME" --simulate --restow * 2>&1) || true; \
+        (cd stow && stow --no-folding -t "$HOME" --simulate --restow * 2>&1) || true; \
     else \
         echo "    (stow not installed or stow directory missing; skipping symlink check)"; \
     fi

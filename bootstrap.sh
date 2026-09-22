@@ -4,7 +4,19 @@
 set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+ERR_LOG="${TMPDIR:-/tmp}/dotfiles-errors.log"
+rm -f "$ERR_LOG" "${TMPDIR:-/tmp}/dotfiles-brew.log"
+
 echo "🚀 Starting macOS dotfiles bootstrap..."
+
+# Step 0: Authenticate administrator credentials upfront
+echo "==> Authenticating administrator credentials upfront..."
+sudo -v
+
+# Keep sudo timestamp updated in background until bootstrap finishes
+while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+SUDO_KEEP_ALIVE_PID=$!
+trap 'kill "$SUDO_KEEP_ALIVE_PID" 2>/dev/null || true' EXIT
 
 # Step 1: Xcode Command Line Tools
 echo "==> Step 1: Checking Xcode Command Line Tools..."
@@ -49,13 +61,30 @@ for f in "$HOME/.zshrc" "$HOME/.zshenv" "$HOME/.zprofile"; do
     mv "$f" "$f.pre-dotfiles"
   fi
 done
-just --justfile "$DIR/justfile" setup
+
+just --justfile "$DIR/justfile" setup || {
+  echo "⚠️ Just setup finished with non-fatal issues." >> "$ERR_LOG"
+}
 
 # Step 6: Import Raycast Configuration
 echo "==> Step 6: Importing Raycast settings..."
 if [ -f "$DIR/raycast/raycast.rayconfig" ]; then
   echo "    Opening Raycast configuration wizard..."
-  open "$DIR/raycast/raycast.rayconfig"
+  open "$DIR/raycast/raycast.rayconfig" 2>/dev/null || true
 fi
 
-echo "✨ Bootstrap completed successfully! Please restart your terminal session or log out to apply all changes."
+# Step 7: Final Completion Summary
+echo ""
+if [ -s "$ERR_LOG" ]; then
+  echo "=============================================================================="
+  echo "⚠️  Bootstrap completed with some non-fatal warnings or failed packages:"
+  echo "=============================================================================="
+  cat "$ERR_LOG"
+  echo "=============================================================================="
+  echo "Review the above issues. Please restart your terminal session or log out to apply all changes."
+else
+  echo "=============================================================================="
+  echo "✨ Bootstrap completed successfully! All steps passed without errors."
+  echo "=============================================================================="
+  echo "Please restart your terminal session or log out to apply all changes."
+fi

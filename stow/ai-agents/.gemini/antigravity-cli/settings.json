@@ -3,5 +3,8 @@
   "statusLine": {
     "type": "command",
     "command": "~/.gemini/antigravity-cli/statusline.sh"
-  }
+  },
+  "trustedWorkspaces": [
+    "/Users/egand/.dotfiles"
+  ]
 }
