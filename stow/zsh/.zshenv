@@ -14,16 +14,6 @@ export PATH="$HOME/.local/share/mise/shims:$PATH"
 # Antigravity & User Local Binaries
 export PATH="$HOME/.antigravity/antigravity/bin:$HOME/.local/bin:$PATH"
 
-# JAVA_HOME (Fallback for non-interactive shells and GUI IDEs)
-if [[ -z "${JAVA_HOME:-}" && -d "$HOME/.local/share/mise/installs/java" ]]; then
-  for _java_dir in "$HOME/.local/share/mise/installs/java"/temurin-25* "$HOME/.local/share/mise/installs/java"/25* "$HOME/.local/share/mise/installs/java"/openjdk-25* "$HOME/.local/share/mise/installs/java"/temurin-21* "$HOME/.local/share/mise/installs/java"/openjdk-21* "$HOME/.local/share/mise/installs/java"/*(N/); do
-    if [[ -d "$_java_dir" ]]; then
-      export JAVA_HOME="$_java_dir"
-      break
-    fi
-  done
-  unset _java_dir
-fi
 
 # Default Editor
 export EDITOR="code"
